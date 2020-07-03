@@ -30,6 +30,7 @@ public class ImpresionController {
 	        listaImpresion.put(1, archivo);
 	        log.info(comentario);
 	        log.info(archivo.getOriginalFilename());
+	        log.info("Holi desde el backend mandame un zing"+listaImpresion.get(1).toString());
 	    }
 	    catch (Exception ex) {
 	        ex.printStackTrace();
