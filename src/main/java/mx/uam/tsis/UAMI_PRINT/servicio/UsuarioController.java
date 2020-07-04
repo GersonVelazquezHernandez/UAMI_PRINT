@@ -69,7 +69,7 @@ public class UsuarioController {
 		)
 	@GetMapping(path = "/usuarios", produces = "application/json" )
 	public ResponseEntity <?> retriveAll(){
-		Iterable <Usuario> result = usuarioService.retriveAll();
+		Iterable <Usuario> result = usuarioService.retrieveAll();
 		return ResponseEntity.status(HttpStatus.OK).body(result); 
 		
 	}
