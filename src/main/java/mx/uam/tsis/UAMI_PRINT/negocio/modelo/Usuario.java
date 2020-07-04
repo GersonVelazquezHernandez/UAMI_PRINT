@@ -31,7 +31,8 @@ public class Usuario {
 	@ApiModelProperty(notes="Apellido del usuario", required=true)
 	private String apellido;
 	
-	@ApiModelProperty(notes="Email del usuario")
+	@NotBlank
+	@ApiModelProperty(notes="Email del usuario", required = true)
 	private String email;
 	
 	@NotBlank

@@ -3,11 +3,14 @@ package mx.uam.tsis.UAMI_PRINT.negocio;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import mx.uam.tsis.UAMI_PRINT.datos.RepositorioUsuario;
 import mx.uam.tsis.UAMI_PRINT.negocio.modelo.Usuario;
 
-
+@Service
+@Slf4j
 public class UsuarioService {
 	@Autowired
 	private RepositorioUsuario repositorioUsuario;
