@@ -1,41 +1,60 @@
+<!DOCTYPE html>
 <html>
-<body>
-<h2>Métodos CRUD</h2>
-<form id="formulario-archivo">
-	<input type="text" id="comentario"placeholder="Texto" name="comentario"/>
-    <label for="archivo">Select file to upload</label>
-    <input type="file" id="archivo" name="archivo">
-    <button type="submit">Start Upload</button>
-</form>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script type="text/javascript">
-//bind the on-change event
-
-
-$(document).ready(function () {
-    // bind form submit event
-    $("#formulario-archivo").on("submit", function (e) {
-        // cancel the default behavior
-        e.preventDefault();
-        // use $.ajax() to upload file
-        $.ajax({
-            url: "/cargar-archivo",
-            type: "POST",
-            data: new FormData(this),
-            enctype: 'multipart/form-data',
-            processData: false,
-            contentType: false,
-            cache: false,
-            success: function (res) {
-                console.log(res);
-                alert("Se ha creado correctamente");
-            },
-            error: function (err) {
-                console.error(err);
-            }
-        });
-    });
-});
-</script>
-</body>
+	<head>
+		<meta charset="utf-8">
+		<link href="../../static/css/indexstyle.css" th:href="@{css/indexstyle.css}" rel="stylesheet"/>	
+	</head>
+	<body>
+			<nav>
+				<img th:src="@{images/logo.PNG}" alt="Logo"/>
+				<ul>
+					<li><a href=#>Imprimir</a></li>
+					<li><a href=#>Contacto</a></li>
+					<li><a id="login" href=#>Iniciar Sesion</a></li>
+					<li><a id="register" class="button" href=#>Registrarte</a></li>
+				</ul>
+			</nav>
+			
+			<div class="modal-bg">
+				<div class="modal-login">
+					<div class="close">+</div>
+					<form action="">
+						<input id="email-login" type="email" placeholder="Email">
+						<input id="password-login" type="password" placeholder="Contraseña">
+						<a id="login-button" class="button" href=#>Iniciar Sesion</a>
+					</form>
+					<img th:src="@{images/footer.PNG}" alt="footer"/>
+				</div>
+			</div>
+			
+			<div class="modal-bg2">
+				<div class="modal-register">
+					<div class="close2">+</div>
+					<form action="">
+						<input id="nombre-register" type="text" placeholder="Nombre">
+						<input id="apellido-register" type="text" placeholder="Apellido">
+						<input id="matricula-register" type="number" placeholder="Matricula">
+						<input id="usuario-register" type="text" placeholder="Usuario">
+						<input id="email-register" type="email" placeholder="Email">
+						<input id="password-register" type="password" placeholder="Contraseña">
+						<a id="register-button" class="button" href=#>Registrarme</a>
+					</form>
+					<img th:src="@{images/footer.PNG}" alt="footer"/>
+				</div>
+			</div>
+	</body>
+	<script>
+		document.getElementById("login").addEventListener("click", function(){
+			document.querySelector('.modal-bg').style.display = 'flex';
+		});
+		document.querySelector('.close').addEventListener("click", function() {
+			document.querySelector('.modal-bg').style.display = "none";
+		});
+		document.getElementById("register").addEventListener("click", function(){
+			document.querySelector('.modal-bg2').style.display = 'flex';
+		});
+		document.querySelector('.close2').addEventListener("click", function() {
+			document.querySelector('.modal-bg2').style.display = "none";
+		});
+	</script>
 </html>
