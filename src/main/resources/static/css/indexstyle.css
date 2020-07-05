@@ -206,11 +206,11 @@ input:focus{
 }
 form .button{
 	position: relative;
-	top: 30px;
 	left: 32%;
 	color: white;
 	text-decoration: none;
 	text-align:center;
+	border:none;
 	background: rgba(210,255,82,1);
 background: -moz-linear-gradient(top, rgba(210,255,82,1) 0%, rgba(145,232,66,1) 100%);
 background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(210,255,82,1)), color-stop(100%, rgba(145,232,66,1)));
@@ -241,7 +241,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#92e842', end
 }
 /**/
 .modal-login img{
-	margin-top:10%;
 	margin-left: 15%;
 }
 /*Modal*/
@@ -276,7 +275,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#92e842', end
 	cursor: pointer;
 }
 .modal-register img{
-	margin-top: 7%;
 	margin-left: 25%;
 }
 .modal-register form .button{
@@ -319,4 +317,11 @@ p.copyright {
 	margin: 0;
     color: #ffffff;
     font-size: 1.2rem;
+}
+#mapholder{
+	width: 100%!important;
+	height: 500px!important;
+}
+.contacto{
+	text-align: center;
 }
