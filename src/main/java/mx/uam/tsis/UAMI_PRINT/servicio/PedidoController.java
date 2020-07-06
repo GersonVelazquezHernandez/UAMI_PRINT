@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import lombok.extern.slf4j.Slf4j;
-import mx.uam.tsis.UAMI_PRINT.negocio.modelo.Pedido;
+//import mx.uam.tsis.UAMI_PRINT.negocio.modelo.Pedido;
 /*Controlador tipo rest de capa de servicio*/
 @RestController
 @Slf4j
 public class PedidoController {
 	@Autowired
-	private Pedido pedido;
+	//private Pedido pedido;
 	
 	
 	//Folder donde se guardaran los documentos
@@ -47,12 +47,12 @@ public class PedidoController {
 		// filename completo del archivo
         String filename = UPLOAD_DIR + File.separator + archivo.getOriginalFilename();
         
-        
+        /*
         pedido.setDescripcionImpresion(descripcionImpresion);
 		pedido.setMetodoPago(metodoPago);
 		pedido.setTipoImpresion(tipoImpresion);
 		pedido.setRutaArchivo(filename);
-        
+        */
 	     // error si el archivo no se subio, viene vacio ó si el archivo ya existe en la carpeta        
         if(archivo.isEmpty() || new File(filename).exists()) {
  			return new ResponseEntity(HttpStatus.BAD_REQUEST);

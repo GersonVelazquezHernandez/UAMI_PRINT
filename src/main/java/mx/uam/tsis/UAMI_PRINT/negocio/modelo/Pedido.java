@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-@NoArgsConstructor
+/*@NoArgsConstructor
 @AllArgsConstructor//Te genera los constructores gracias a la dependencia de Lombok
 @Builder 
 @Data // Permite la creacion de geters y seters con la dependencia lombok
@@ -24,3 +24,4 @@ public class Pedido {
     
     
 }
+*/
