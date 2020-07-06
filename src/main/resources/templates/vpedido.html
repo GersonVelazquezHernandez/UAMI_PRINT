@@ -1,0 +1,41 @@
+<html>
+<body>
+<h2>Métodos CRUD</h2>
+<form id="formulario-archivo">
+	<input type="text" id="comentario"placeholder="Texto" name="comentario"/>
+    <label for="archivo">Select file to upload</label>
+    <input type="file" id="archivo" name="archivo">
+    <button type="submit">Start Upload</button>
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript">
+//bind the on-change event
+
+
+$(document).ready(function () {
+    // bind form submit event
+    $("#formulario-archivo").on("submit", function (e) {
+        // cancel the default behavior
+        e.preventDefault();
+        // use $.ajax() to upload file
+        $.ajax({
+            url: "/cargar-archivo",
+            type: "POST",
+            data: new FormData(this),
+            enctype: 'multipart/form-data',
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: function (res) {
+                console.log(res);
+                alert("Se ha creado correctamente");
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>
