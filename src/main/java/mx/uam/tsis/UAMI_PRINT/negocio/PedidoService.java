@@ -1,11 +1,11 @@
-package mx.uam.tsis.UAMI_PRINT.negocio.modelo;
+package mx.uam.tsis.UAMI_PRINT.negocio;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Builder;
 import lombok.Data;
 @Builder
 @Data
-public class Impresion {
+public class PedidoService {
 	private String comentario;
     private MultipartFile[] archivo;
 }
