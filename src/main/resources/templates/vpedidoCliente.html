@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Yellowtail&display=swap" rel="stylesheet">
+		<link href="../../static/css/pedidoClienteStyle.css" th:href="@{css/pedidoClienteStyle.css}" rel="stylesheet"/>	
+	</head>
+	
+	<body>
+		
+		<nav>
+			<img th:src="@{images/logo.PNG}" alt="Logo"/>
+			<ul>
+				<!-- <li><a href=#>Imprimir</a></li>  -->
+				<li><a id="a_contacto" href="#contacto">Contacto</a></li>
+				<li><a id="login" href=#>Iniciar Sesion</a></li>
+				<li><a id="register" class="button" href=#>Registrarte</a></li>
+			</ul>
+		</nav>
+		
+		<h1>Realizar solicitud de impresión</h1>
+			<form action="#" id="form-pedido">
+			
+				<p class="titulo-pedido">Tipo de impresión:</p>
+				<div class="impersionType-container">
+					<input type=radio id="impresionTypeColor" name="tipo" value="Color">
+					<label for="impresionTypeColor">Color</label>
+					<input type=radio id="impresionTypeByN" name="tipo" value="BlancoNegro">
+					<label for="impresionTypeByN">Blanco y Negro</label>
+				</div>
+				
+				<p class="titulo-pedido">Documento a imprimir:</p>
+				<div class="impersionType-container">
+					<label for="archivo">Añade un archivo a imprimir:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+					<input type="file" id="archivo" name="archivo">
+				</div>
+				
+				<p class="titulo-pedido">Descripción:</p>
+				<div class="impersionType-container">
+					<label for="comentario">Descripción de tu impresión:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+					<input type="text" id="comentario" placeholder="Descripcion" name="comentario"/>
+				</div>
+				
+				<p class="titulo-pedido">Total a pagar:</p>
+				<div class="impersionType-container">
+					<p class="totalPago">El pedido es de $******* MXN.</p>
+				</div>
+				
+				<p class="titulo-pedido">Forma de pago:</p>
+				<div class="impersionType-container">
+					<button class="metodoPago">Efectivo</button>
+					<button class="metodoPago">Tarjeta de Credito</button>
+				</div>
+				
+			</form>
+		
+			<footer>
+				<p class="copyright">Todos los derechos Reservados Equipo UAMIPrint &reg; 2020</p>
+			</footer>
+		
+	</body>
+	
+</html>
+
