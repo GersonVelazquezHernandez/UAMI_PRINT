@@ -83,4 +83,35 @@ public class UsuarioService {
 	
 	
 	
+	/**
+	 * Acceso de usuario al sistema validando matricula y contraseña
+	 * 
+	 * @param matricula
+	 * @param contrasena
+	 * @return Objeto usuario si datos de acceso son correctos, NULL en caso contrario
+	 */
+	public Usuario findByMatriculaAndPassword(Integer matricula, String contrasena) {
+		//Buscando usuario en BD por matricula
+		Optional <Usuario> usuarioOp= repositorioUsuario.findById(matricula);
+		
+		log.info("Dentro de UsuarioService en metodo findByMatrAndPass recibiendo matricula"+matricula+" y contrasena "+contrasena);
+		
+		//Validando si usuario existe en BD
+		if(usuarioOp.isPresent()) {
+			log.info("Contraseña del usuario en BD" +usuarioOp.get().getContrasena()+ "   Contraseña recibida por UsuarioController "+contrasena);
+			
+			//Validando si contraseña de acceso es igual a la contraseña del sistema 
+			if(usuarioOp.get().getContrasena().equals(contrasena)) {
+				log.info("Contraseña correcta y devolviendo Usuario " +usuarioOp.get());
+				return usuarioOp.get();
+			}else {
+				log.info("Contraseña incorrecta y devolviendo Usuario NULL");
+				return null;
+			}
+		}else {
+			log.info("Dentro de UsuarioService en metodo findByMatrAndPass y devolviendo NULL por que no existe el usuario con matricula "+matricula);
+			return null;
+		}
+		
+	}
 }

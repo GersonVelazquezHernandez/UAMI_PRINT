@@ -127,5 +127,40 @@ public class UsuarioController {
 				
 	}
 	
-
+	
+	
+	
+	
+	/**
+	 * Valida datos del usuario (matricula y contraseña) para acceso a sistema 
+	 * 
+	 * @param usuario
+	 * @param contrasena
+	 * @return Si usuario y contraseña son correcto devuelve el Usuario, en caso contrario devuelve null
+	 */
+	@ApiOperation(
+			value = "Acceso Usuario al sistema",
+			notes = "Validad la cuenta de usuario (matricula y contraseña) para dar acceso"		
+			)
+	@GetMapping(path ="/usuario/{matricula}/{contrasena}", produces = "application/json")
+	public ResponseEntity <?> access(@PathVariable("matricula") Integer matricula,
+									@PathVariable("contrasena") String contrasena){
+		
+		log.info("Dentro de UsuarioController en metodo ACCES con matricula "+matricula+" y contrasena "+contrasena);
+		
+		//Validando variables matricula y contraseña no esten vacias
+		if(matricula == null || contrasena.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La matricula o contraseña estan vacios");
+		}else {
+			
+			Usuario usuario = usuarioService.findByMatriculaAndPassword(matricula, contrasena);
+			
+			//Validando si existe el usuario y devuelve estado Http correspondiente
+			if(usuario != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(usuario);
+			}else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			}		
+		}
+	}
 }

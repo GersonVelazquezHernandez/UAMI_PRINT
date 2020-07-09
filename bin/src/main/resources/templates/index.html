@@ -1,41 +1,412 @@
+<!DOCTYPE html>
 <html>
-<body>
-<h2>Métodos CRUD</h2>
-<form id="formulario-archivo">
-	<input type="text" id="comentario"placeholder="Texto" name="comentario"/>
-    <label for="archivo">Select file to upload</label>
-    <input type="file" id="archivo" name="archivo">
-    <button type="submit">Start Upload</button>
-</form>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script type="text/javascript">
-//bind the on-change event
+	<head>
+		<meta charset="utf-8">
+		<link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Yellowtail&display=swap" rel="stylesheet">
+		<link href="../../static/css/indexstyle.css" th:href="@{css/indexstyle.css}" rel="stylesheet"/>	
+	</head>
+	<body>
+			<nav>
+				<img th:src="@{images/logo.PNG}" alt="Logo"/>
+				<ul>
+					<!-- <li><a href=#>Imprimir</a></li>  -->
+					<li><a id="a_contacto" href="#contacto">Contacto</a></li>
+					<li><a id="login" href=#>Iniciar Sesion</a></li>
+					<li><a id="register" class="button" href=#>Registrarte</a></li>
+				</ul>
+			</nav>
+			<header>
+		        <div class="hero">
+		            <div class="contenido-header">        
+		                    <h1 class="letter">UAMIPrint</h1>
+		                    <p class="slogan">!!! la mejor Opción para<b> tus impresiones</b>!!!</p>
+		                <!--informacion-evento-->
+		            </div>
+		        </div>
+		        <!--Img Hero-->
+		    </header>
+			
+			<div class="modal-bg">
+				<div class="modal-login">
+					<div class="close">+</div>
+					<form action="#" id="form_login">
+						<input id="matricula-login" type="text" placeholder="Matricula">
+						<input id="password-login" type="password" placeholder="Contraseña">
+						<button type="submit" id="login-usuario" class="button">Iniciar Sesion</button>
+					</form>
+					<img th:src="@{images/footer.PNG}" alt="footer"/>
+				</div>
+			</div>
+			
+			<div class="modal-bg2">
+				<div class="modal-register">
+					<div class="close2">+</div>
+					<form action="#" id="form_registrar_usuario">
+						<input id="nombre-register" type="text" placeholder="Nombre">
+						<input id="apellido-register" type="text" placeholder="Apellido">
+						<input id="matricula-register" type="number" placeholder="Matricula">
+						<input id="usuario-register" type="text" placeholder="Usuario">
+						<input id="email-register" type="email" placeholder="Email">
+						<input id="password-register" type="password" placeholder="Contraseña">
+						<button type="submit" id="registrar-usuario" class="button">Registrarme</button>
+					</form>
+					<img th:src="@{images/footer.PNG}" alt="footer"/>
+				</div>
+			</div>
+			
+			<main>
+				<h2>Conoce nuestro servicio.</h2>
+				<p>Manda a <b>imprimir</b> cuando quieras y recoje en la papelería sin hacer fila.</p>
+				<div>
+					<h3>Pasos: </h3>
+					<ol>
+					<li>Registrate en nuestra plataforma.</li>
+					<li>Inicia Sesion con tu usuario registrado.</li>
+					<li>Sube el archivo que quieras imprimir.</li>
+					<li>Da click en imprimir.</li>
+					</ol>
+					<legend><b>!Listo!</b> tu archivo estará impreso cuando lo recojas.</legend>
+				</div>
+			</main>
+			<section id="contacto">			
+				<div id="mapholder"></div>
+				<div class="contacto">
+				<h2>Ubicación</h2>
+				<p>Avenida San Rafael Atlixco 186, Colonia Vicentina, 09340 Iztapalapa, CDMX</p>
+				<p>Teléfono: 5804-4600</p>
+				</div>
+			</section>
+	</body>
+	<footer>
+	<p class="copyright">Todos los derechos Reservados Equipo UAMIPrint &reg; 2020</p>
+	</footer>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://maps.google.com/maps/api/js?key=AIzaSyBZFZoRCKkk52BCnR8Mh2Nwk7hXaVFqoF0"></script>
+
+<!-- <script src="../../static/js/jquery.lettering.js"></script>  -->
+	<script>
+		function showPosition(position) {
+		  var lat = 19.360533;//position.coords.latitude;
+		  var lon = -99.073864;//position.coords.longitude;
+		  var latlon = new google.maps.LatLng(lat, lon);
+		  var mapholder = document.getElementById('mapholder');
+		  mapholder.style.height = '250px';
+		  mapholder.style.width = '500px';
+
+		  var myOptions = {
+		    center:latlon,zoom:14,
+		    mapTypeId:google.maps.MapTypeId.ROADMAP,
+		    mapTypeControl:false,
+		    navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
+		  }
+		    
+		  var map = new google.maps.Map(document.getElementById("mapholder"), myOptions);
+		  var marker = new google.maps.Marker({position:latlon,map:map,title:"You are here!"});
+		}
+
+		function showError(error) {
+		  switch(error.code) {
+		    case error.PERMISSION_DENIED:
+		      x.innerHTML = "User denied the request for Geolocation."
+		      break;
+		    case error.POSITION_UNAVAILABLE:
+		      x.innerHTML = "Location information is unavailable."
+		      break;
+		    case error.TIMEOUT:
+		      x.innerHTML = "The request to get user location timed out."
+		      break;
+		    case error.UNKNOWN_ERROR:
+		      x.innerHTML = "An unknown error occurred."
+		      break;
+		  }
+		}
+	$(document).ready(function(){
+		if (navigator.geolocation) {
+		    navigator.geolocation.getCurrentPosition(showPosition, showError);
+		  } else { 
+			  Swal.fire({
+	              icon: 'error',
+	              title: 'Error!',
+	              text:'La Geolocalización no está soportada en este navegador!',
+	            });
+		  }
+		  // Add smooth scrolling to all links
+		  $("#a_contacto").on('click', function(event) {
+
+		    // Make sure this.hash has a value before overriding default behavior
+		    if (this.hash !== "") {
+		      // Prevent default anchor click behavior
+		      event.preventDefault();
+
+		      // Store hash
+		      var hash = this.hash;
+
+		      // Using jQuery's animate() method to add smooth page scroll
+		      // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
+		      $('html, body').animate({
+		        scrollTop: $(hash).offset().top
+		      }, 1000, function(){
+		   
+		        // Add hash (#) to URL when done scrolling (default click behavior)
+		        //window.location.hash = hash;
+		      });
+		    } // End if
+		  });
+		});
+		document.getElementById("login").addEventListener("click", function(e){
+			e.preventDefault(); // el action ya no se ejecuta de php y cae en el default
+			var element = document.querySelector("body");
+			// smooth scroll to element and align it at the bottom
+			element.scrollIntoView({ behavior: 'smooth', block: 'start'});
+			setTimeout(() => {
+				document.querySelector('body').style.overflow="hidden";
+				document.querySelector('.modal-bg').style.display = 'flex';
+			}, 500);
+		});
+		document.querySelector('.close').addEventListener("click", function() {
+			document.querySelector('.modal-bg').style.display = "none";
+			document.querySelector('body').style.overflow="scroll";
+		});
+		document.getElementById("register").addEventListener("click", function(e){
+			e.preventDefault(); // el action ya no se ejecuta de php y cae en el default
+			var element = document.querySelector("body");
+			// smooth scroll to element and align it at the bottom
+			element.scrollIntoView({ behavior: 'smooth', block: 'start'});
+			setTimeout(() => {
+				document.querySelector('body').style.overflow="hidden";
+				document.querySelector('.modal-bg2').style.display = 'flex';
+			}, 500);
+
+		});
+		document.querySelector('.close2').addEventListener("click", function() {
+			document.querySelector('.modal-bg2').style.display = "none";
+			document.querySelector('body').style.overflow="scroll";
+		});
+		
+		/***REGISTRAR USUARIO***/
+		const formulario_registrar_usuario = document.querySelector('#form_registrar_usuario');
+		document.getElementById("registrar-usuario").onclick = function() {eventListeners("registrar")};
+	
+		function leerFormulario(e) {
+		    e.preventDefault(); // el action ya no se ejecuta de php y cae en el default
+		    const matricula = document.querySelector('#matricula-register').value,
+		        nombre = document.querySelector('#nombre-register').value,
+		        apellido = document.querySelector('#apellido-register').value,
+		        usuario = document.querySelector('#usuario-register').value,
+		        email = document.querySelector('#email-register').value,
+		        password = document.querySelector('#password-register').value;
+		        if (matricula === '' || nombre === '' || apellido === '' || usuario === '' || email === '' || password === '') {
+		            console.log('Algun campo vacio');
+		            Swal.fire({
+			              icon: 'error',
+			              title: 'Error!',
+			              text:'Todos los campos son Obligatorios!',
+			            });
+		        } else {
+		            console.log("validacion correcta");
+		            var text = {
+		            	    "matricula":parseInt(matricula),
+		            	    "nombre":nombre,
+		            	    "apellido":apellido,
+		            	    "email":email,
+		            	    "usuario":usuario,
+		            	    "contrasena":password
+		            	}
+		            insertarBD(text);
+		        }
+		}
+		function insertarBD(datos){
+			//llamado a ajax
+		    const xhr = new XMLHttpRequest();
+			console.log(datos)
+		    //crear el objeto
+		    //abrir la conexion
+		    xhr.onload = function() {
+		        if (this.status === 201) {
+		            //console.log(xhr.responseText);
+		            //const respuesta = JSON.parse(xhr.responseText);
+		            //console.log(respuesta);
+		        	Swal.fire({
+			              icon: 'success',
+			              title: 'Se creo correctamente el usuario.',
+			              showConfirmButton: false,
+			              timer: 2000
+			            });
+			            setTimeout(() => {
+				            window.location.href = 'http://localhost:8080/ejemplo';
+			            }, 2000);
+		        }
+		        else{
+		        	console.log(this.status);
+		        	Swal.fire({
+			              icon: 'error',
+			              title: 'Error!',
+			              text:'El usuario no pudo ser registrado!',
+			            });
+		        }
+		    }
+		    xhr.open('POST', 'http://localhost:8080/usuario');
+
+		 // set `Content-Type` header
+		    xhr.setRequestHeader('Content-Type', 'application/json');
+
+		    // send rquest with JSON payload
+		    xhr.send(JSON.stringify(datos));
+		}
+		
+		/********Loggear usuario o administrador*********/
+		const formulario_login = document.querySelector('#form_login');
+		document.getElementById("login-usuario").onclick = function() {eventListeners("login")};
+		
+		function leerForm(e) {
+		    e.preventDefault(); // el action ya no se ejecuta de php y cae en el default
+		    const matricula = document.querySelector('#matricula-login').value,
+		        password = document.querySelector('#password-login').value;
+		        if (matricula === '' || password === '') {
+		            console.log('Algun campo vacio');
+		            Swal.fire({
+			              icon: 'error',
+			              title: 'Error!',
+			              text:'Todos los campos son Obligatorios',
+			            });
+		        } else {
+		            console.log("validacion correcta");
+		            var text = {
+		            	    "matricula":parseInt(matricula),
+		            	    "contrasena":password
+		            	}
+		            loginBD(parseInt(matricula));
+		            
+		        }
+		        
+		}
+		function loginBD(id){
+			const xhr = new XMLHttpRequest();
+
+		    xhr.onload = function() {
+		        if (this.status === 200) {
+		            console.log(xhr.responseText);
+		            const resultado = JSON.parse(xhr.responseText);
+		            console.log(resultado); 
+		            
+		            Swal.fire({
+			              icon: 'success',
+			              title: 'Bienvenido!',
+			              showConfirmButton: false,
+			              timer: 2000
+			            });
+			            setTimeout(() => {
+				            window.location.href = 'http://localhost:8080/ejemplo';
+			            }, 2000);
+		        }
+		        else{
+		        	console.log(this.status);
+		        	Swal.fire({
+			              icon: 'error',
+			              title: 'Error!',
+			              text:'¡No se puede Iniciar Sesion!',
+			            });
+		        }
+		    }
+		        xhr.open('GET', 'http://localhost:8080/usuario/'+id);
+
+		        // set `Content-Type` header
+		           //xhr.setRequestHeader('Content-Type', 'application/json');
+
+		           // send rquest with JSON payload
+		           xhr.send();
+		}
+		
+		
+		/****************LISTENER PARA FORMULARIOS******************/
+		function eventListeners(accion){
+			if (accion === "registrar"){
+				console.log("Dentro de registrar");
+				formulario_registrar_usuario.addEventListener('submit', leerFormulario);
+			}
+			if(accion === "login"){
+				console.log("Dentro de login");
+				formulario_login.addEventListener('submit', leerForm);
+			}
+		}
+		
+		/************ LETTERING ***********/
+		$(document).ready(function(){
+			$(".letter").lettering();
+		});
+		/*global jQuery */
+		/*!
+		* Lettering.JS 0.7.0
+		*
+		* Copyright 2010, Dave Rupert http://daverupert.com
+		* Released under the WTFPL license
+		* http://sam.zoy.org/wtfpl/
+		*
+		* Thanks to Paul Irish - http://paulirish.com - for the feedback.
+		*
+		* Date: Mon Sep 20 17:14:00 2010 -0600
+		*/
+		(function($){
+			function injector(t, splitter, klass, after) {
+				var text = t.text()
+				, a = text.split(splitter)
+				, inject = '';
+				if (a.length) {
+					$(a).each(function(i, item) {
+						inject += '<span class="'+klass+(i+1)+'" aria-hidden="true">'+item+'</span>'+after;
+					});
+					t.attr('aria-label',text)
+					.empty()
+					.append(inject)
+
+				}
+			}
 
 
-$(document).ready(function () {
-    // bind form submit event
-    $("#formulario-archivo").on("submit", function (e) {
-        // cancel the default behavior
-        e.preventDefault();
-        // use $.ajax() to upload file
-        $.ajax({
-            url: "/cargar-archivo",
-            type: "POST",
-            data: new FormData(this),
-            enctype: 'multipart/form-data',
-            processData: false,
-            contentType: false,
-            cache: false,
-            success: function (res) {
-                console.log(res);
-                alert("Se ha creado correctamente");
-            },
-            error: function (err) {
-                console.error(err);
-            }
-        });
-    });
-});
-</script>
-</body>
+			var methods = {
+				init : function() {
+
+					return this.each(function() {
+						injector($(this), '', 'char', '');
+					});
+
+				},
+
+				words : function() {
+
+					return this.each(function() {
+						injector($(this), ' ', 'word', ' ');
+					});
+
+				},
+
+				lines : function() {
+
+					return this.each(function() {
+						var r = "eefec303079ad17405c889e092e105b0";
+						// Because it's hard to split a <br/> tag consistently across browsers,
+						// (*ahem* IE *ahem*), we replace all <br/> instances with an md5 hash
+						// (of the word "split").  If you're trying to use this plugin on that
+						// md5 hash string, it will fail because you're being ridiculous.
+						injector($(this).children("br").replaceWith(r).end(), r, 'line', '');
+					});
+
+				}
+			};
+
+			$.fn.lettering = function( method ) {
+				// Method calling logic
+				if ( method && methods[method] ) {
+					return methods[ method ].apply( this, [].slice.call( arguments, 1 ));
+				} else if ( method === 'letters' || ! method ) {
+					return methods.init.apply( this, [].slice.call( arguments, 0 ) ); // always pass an array
+				}
+				$.error( 'Method ' +  method + ' does not exist on jQuery.lettering' );
+				return this;
+			};
+
+		})(jQuery);
+		/********FIN DE LETTERING*********/
+	</script>
 </html>
