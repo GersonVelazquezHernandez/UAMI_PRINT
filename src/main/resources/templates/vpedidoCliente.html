@@ -24,8 +24,8 @@
 			
 				<p class="titulo-pedido">Tipo de impresión:</p>
 				<div class="impersionType-container">
-					<input type=radio id="impresionTypeColor" name="tipo" value="Color">
-					<label for="impresionTypeColor">Color</label>
+					<input type=radio id="impresionTypeC" name="tipo" value="Color">
+					<label for="impresionTypeC">Color</label>
 					<input type=radio id="impresionTypeByN" name="tipo" value="BlancoNegro">
 					<label for="impresionTypeByN">Blanco y Negro</label>
 				</div>
@@ -33,7 +33,7 @@
 				<p class="titulo-pedido">Documento a imprimir:</p>
 				<div class="impersionType-container">
 					<label for="archivo">Añade un archivo a imprimir:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
-					<input type="file" id="archivo" name="archivo">
+					<input type="file" id="archivo" name="archivo" accept="application/pdf">
 				</div>
 				
 				<p class="titulo-pedido">Descripción:</p>
@@ -49,10 +49,16 @@
 				
 				<p class="titulo-pedido">Forma de pago:</p>
 				<div class="impersionType-container">
-					<button class="metodoPago">Efectivo</button>
-					<button class="metodoPago">Tarjeta de Credito</button>
+					<!--<button class="metodoPago">Efectivo</button>-->
+					<!--<button class="metodoPago">Tarjeta de Credito</button>  -->
+					<input type="radio" id="pagoTypeE" name="pago" value="efectivo">
+					<label for="pagoType" class="metodoPago">Efectivo</label>
+					<input type="radio" id="pagoTypeT" name="pago" value="tarjeta">
+					<label for="pagoTypeT" class="metodoPago">Tarjeta de Credito</label>
 				</div>
-				
+				<div class="impersionType-container">
+					<button type="submit" id="realizaPedido" class="button">Solicitar ahora</button>
+				</div>
 			</form>
 		
 			<footer>
@@ -61,5 +67,154 @@
 		
 	</body>
 	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+	
+	<script>
+		var fileNameAux = '';
+		var fileSizeAux = '';
+		/**DATOS DOCUMENTO**/
+		$(document).on('change','input[type="file"]',function(){
+			// this.files[0].size recupera el tamaño del archivo
+			// alert(this.files[0].size);
+			
+		    fileName = this.files[0].name;
+		    fileSize = this.files[0].size;
+		    
+		    fileNameAux = fileName;
+		    fileSizeAux = fileSize;
+		
+			if(fileSize > 3000000){
+				alert('El archivo no debe superar los 3MB');
+				this.value = '';
+				this.files[0].name = '';
+			}else{
+				// recuperamos la extensión del archivo
+				var ext = fileName.split('.').pop();
+				
+				// Convertimos en minúscula porque 
+				// la extensión del archivo puede estar en mayúscula
+				ext = ext.toLowerCase();
+		    
+				// console.log(ext);
+				switch (ext) {
+					case 'jpg':
+					case 'jpeg':
+					case 'png':
+					case 'pdf': break;
+					default:
+						alert('El archivo no tiene la extensión adecuada');
+						this.value = ''; // reset del valor
+						this.files[0].name = '';
+				}
+			}
+		});
+	
+		/***REGISTRAR PEDIDO***/
+		const formulario_registrar_pedido = document.querySelector('#form-pedido');
+		document.getElementById("realizaPedido").onclick = function() {eventListeners("pedido")};
+
+		function leerFormulario(e) {
+		    e.preventDefault(); // el action ya no se ejecuta de php y cae en el default
+		   
+		   var tipoImp,tipoPay;
+		   var fileSizeForm = fileSizeAux;
+		   /**verifico checkbox tipo de impresion**/
+		   if (document.getElementById('impresionTypeC').checked) {
+ 				 tipoImp = document.querySelector('#impresionTypeC').value;
+			}
+		   if (document.getElementById('impresionTypeByN').checked) {
+				 tipoImp = document.querySelector('#impresionTypeByN').value;
+			}
+		   /** verifico forma de pago**/
+		    if (document.getElementById('pagoTypeE').checked) {
+ 				 tipoPay = document.querySelector('#pagoTypeE').value;
+			}
+		   if (document.getElementById('pagoTypeT').checked) {
+				 tipoPay = document.querySelector('#pagoTypeT').value;
+			}
+		   
+		   const tipoDeImpresion = tipoImp, tamañoArchivo = fileSizeForm, descripcion = document.querySelector('#comentario').value, tipoDePago = tipoPay;
+		   alert(tipoDeImpresion+" "+tamañoArchivo+" "+descripcion+" "+tipoPay);
+		   
+		   /**Verifico si fueron llenados los campos**/
+		   if ((document.getElementById('impresionTypeByN').checked || document.getElementById('impresionTypeC').checked) && (document.getElementById('pagoTypeE').checked || document.getElementById('pagoTypeT').checked)){
+				   if(tipoDeImpresion === 'undefined' || tamañoArchivo === '' || descripcion === '' || tipoDePago === 'undefined'){
+					   console.log('Algun campo vacio');
+			            Swal.fire({
+				              icon: 'error',
+				              title: 'Error!',
+				              text:'Todos los campos son Obligatorios!',
+				            });
+				   }else {
+			            console.log("validacion correcta");
+			            var text = {
+			            	    "tipoDeImpresion":tipoImp,
+			            	    "tamañoArchivo":parseInt(tamañoArchivo),
+			            	    "descripcion":descripcion,
+			            	    "metodoDePago":tipoDePago
+			            	}
+			            //insertarBD(text);
+			        }
+		   }else{
+			   console.log('Algun campo vacio');
+	            Swal.fire({
+		        icon: 'error',
+		        title: 'Error!',
+		        text:'Todos los campos son Obligatorios!',
+		        });
+		   }
+		}
+	
+		
+		function insertarBD(datos){
+			//llamado a ajax
+		    const xhr = new XMLHttpRequest();
+			console.log(datos)
+		    //crear el objeto
+		    //abrir la conexion
+		    xhr.onload = function() {
+		        if (this.status === 201) {
+		            //console.log(xhr.responseText);
+		            //const respuesta = JSON.parse(xhr.responseText);
+		            //console.log(respuesta);
+		        	Swal.fire({
+			              icon: 'success',
+			              title: 'Se creo correctamente el pedido.',
+			              showConfirmButton: false,
+			              timer: 2000
+			            });
+			            setTimeout(() => {
+				            window.location.href = 'http://localhost:8080/ejemplo';
+			            }, 2000);
+		        }
+		        else{
+		        	console.log(this.status);
+		        	Swal.fire({
+			              icon: 'error',
+			              title: 'Error!',
+			              text:'El pedido no pudo ser registrado!',
+			            });
+		        }
+		    }
+		    xhr.open('POST', 'http://localhost:8080/pedido');
+
+		 // set `Content-Type` header
+		    xhr.setRequestHeader('Content-Type', 'application/json');
+
+		    // send rquest with JSON payload
+		    xhr.send(JSON.stringify(datos));
+		}
+		
+		
+		/****************LISTENER PARA FORMULARIOS******************/
+		function eventListeners(accion){
+			if (accion === "pedido"){
+				console.log("Dentro de pedido");
+				formulario_registrar_pedido.addEventListener('submit', leerFormulario);
+			}
+		}
+	
+	</script>
 </html>
 

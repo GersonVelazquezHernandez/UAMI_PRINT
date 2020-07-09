@@ -16,7 +16,7 @@ public class MainController {
 	@GetMapping("/")
 	public String index() {
 		log.info("*****En Index******");
-		return "index";
+		return "vpedidoCliente";
 	}
 	
 	@RequestMapping("/ejemplo")
