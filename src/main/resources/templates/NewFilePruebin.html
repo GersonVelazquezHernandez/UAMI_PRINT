@@ -3,9 +3,19 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
+ <!-- jQuery library -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
 <!-- Imaginar que esta es una pagina bien mamalona para cuando el usuario de haya registrado -->
-<h1 th:text="${matricula}"></h1>
+<h1 id = "Experimento" th:text="${matricula}"></h1>
+
+<script type="text/javascript">
+		$(document).ready(function(){
+			var variable = $("#Experimento").text();
+			alert(parseInt(variable));
+		});
+	
+</script>
 </body>
 </html>
