@@ -49,11 +49,12 @@ public class Usuario {
 	private String contrasena;
 	
 	
-	
+	/*
 	//Podriamos decir que esta es una identiada foranea para la base de datos ya que podemos tener multiples pedidos un cliente (cardinalidad multiple)
 		@Builder.Default
 		@OneToMany(targetEntity = Pedido.class, fetch = FetchType.LAZY, cascade = CascadeType.MERGE) //Decimos que es de uno a muchos, con el Lazy le decimos que recorra su lista de alumnos y nos devuelba solo ese alumno y no todos de forma anticipada
 		@JoinColumn(name = "idPedido") // No crea tabla intermedia	
 		private List <Pedido> alumnos = new ArrayList<>();
+	*/
 
 }

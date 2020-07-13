@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
+import mx.uam.tsis.UAMI_PRINT.negocio.PedidoService;
 import mx.uam.tsis.UAMI_PRINT.negocio.modelo.Pedido;
 /*Controlador tipo rest de capa de servicio*/
 @RestController
@@ -38,9 +39,12 @@ public class PedidoController {
 	
 	private Pedido pedido = new Pedido();
 	
+	@Autowired
+	private PedidoService pedidoService;
+	
 	
 	//Folder donde se guardaran los documentos
-	private static final String UPLOAD_DIR = "C://pruebas";
+	private static final String UPLOAD_DIR = "C:/pruebas";
 	
 	
 	@PostMapping(path = "/cargar-archivo")
@@ -84,7 +88,8 @@ public class PedidoController {
 	
 	
 	/******************  METODOS ALTERNATIVOS ****************************************/
-	@PostMapping(path = "/descargar-archivo")
+	
+	@PostMapping(path = "/descargar-archivo", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity <?>descarga(
 			@RequestParam("descripcion") String descripcionImpresion,
@@ -94,21 +99,23 @@ public class PedidoController {
 			
 			) throws IOException, ServletException {
 		
+		pedido = new Pedido();
+		
 		// filename completo del archivo
-        String filename = UPLOAD_DIR + "//" + archivo.getOriginalFilename();
+        String filename = UPLOAD_DIR + "/" + archivo.getOriginalFilename();
         log.info("Ruta de archivo almacenado "+filename);
         
         pedido.setDescripcionImpresion(descripcionImpresion);
 		pedido.setMetodoPago(metodoPago);
 		pedido.setTipoImpresion(tipoImpresion);
 		pedido.setRutaArchivo(filename);
-        
+        /*
 	     // error si el archivo no se subio, viene vacio ó si el archivo ya existe en la carpeta        
         if(archivo.isEmpty() || new File(filename).exists()) {
  			return new ResponseEntity(HttpStatus.BAD_REQUEST);
  		}
         
-        
+      
 		// Creacion de archivo en la carpeta
         File fileSaveDir = new File(UPLOAD_DIR);
         if (!fileSaveDir.exists()) { // crea el directorio si no existe
@@ -123,6 +130,9 @@ public class PedidoController {
         //return new ResponseEntity(HttpStatus.ACCEPTED);
         
         return ResponseEntity.status(HttpStatus.CREATED).body(pedido);
-       
+       */
+		Pedido nuevoPedido = pedidoService.create(pedido, archivo);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPedido);
 	}
 }
