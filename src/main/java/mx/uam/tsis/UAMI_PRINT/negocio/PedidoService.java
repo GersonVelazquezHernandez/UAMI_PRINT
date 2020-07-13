@@ -50,5 +50,39 @@ public class PedidoService {
 	 	return repositorioPedido.save(nuevoPedido);
         
 	}
+	
+	//Funcion para devolver todos los pedidos
+	public Iterable <Pedido> retrieveAll (){
+		return repositorioPedido.findAll();
+	}
+	
+	//Funcion para devolver un pedido en especifico por ID
+	public Pedido findById(Integer idPedido) {
+		Optional <Pedido> pedidoOpt = repositorioPedido.findById(idPedido);  
+		
+		//Validando si existe el pedido y devolverlo como objeto
+		if(pedidoOpt.isPresent()) {
+			return pedidoOpt.get(); 
+		} else {
+			return null;
+		}
+	}
+	
+	//Funcion que actualiza un pedido
+	public Pedido update(Pedido pedido) {
+		 return repositorioPedido.save(pedido);
+	}
+	
+	//Funcion que elimina un pedido
+	public Pedido delete(Pedido pedido) {
+		Optional <Pedido> pedidoOpt = repositorioPedido.findById(pedido.getIdPedido()); 
+			
+		if(pedidoOpt.isPresent()) {
+			repositorioPedido.delete(pedido);    //Eliminando alumno
+			return pedidoOpt.get();              //Enviando objeto copia de alumno eliminado
+		} else {
+			return null;
+		}
+	 }
 
 }
