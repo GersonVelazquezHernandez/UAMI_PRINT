@@ -26,12 +26,9 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity//indica que hay que persistir en la BD
 public class Tarjeta {
-	@Id
-	@GeneratedValue//cada que cree una instancia de grupo generara una llave unica
-	private Integer id; 
-	
-
+	@NotNull
 	@ApiModelProperty(notes = "Numero de Tarjeta", required= true)
+	@Id
 	private Integer numeroTarjeta;
 
 	@ApiModelProperty(notes = "cvv de tarjeta", required= true)
