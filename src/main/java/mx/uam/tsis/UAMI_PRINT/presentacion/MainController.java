@@ -28,7 +28,7 @@ public class MainController {
 	
 	
 	
-	@RequestMapping("/NewFilePruebin/{matricula}")
+	@RequestMapping("/vpedidoCliente/{matricula}")
 	public String vpedido(@PathVariable Integer matricula, Model model) {
 		model.addAttribute("matricula", matricula);
 		return "NewFilePruebin";
