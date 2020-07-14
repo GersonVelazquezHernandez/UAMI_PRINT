@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html  xmlns:th = "http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+ <!-- jQuery library -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<!-- Imaginar que esta es una pagina bien mamalona para cuando el usuario de haya registrado -->
+<h1 id = "Experimento" th:text="${matricula}"></h1>
+<a href= "C:/pruebas/2143008291/apanloo práctica 9.pdf">jajajajaja</a>
+
+
+<form id="formulario-archivo">
+	<input type="text" id="descripcion"placeholder="Descripcion" name="descripcion"/>
+	
+    <label for="archivo">Select file to upload</label>
+    <input type="file" id="archivo" name="archivo">
+    
+    <input type="text" id="tipo"placeholder="Tipo de impresion" name="tipo"/>
+    
+    <input type="text" id="pago"placeholder="Tipo de pago" name="pago"/>
+    
+    <input type="text" id="precio" placeholder="precio total" value = "23" name="precio"/>
+    
+    <button type="submit">Start Upload</button>
+</form>
+
+
+
+<script type="text/javascript">
+		$(document).ready(function(){
+			var variable = $("#Experimento").text();
+			var variableEntera = parseInt(variable);
+			var precioTotal = $("#precio").val();
+			alert(variableEntera);
+			
+			
+			
+			// bind form submit event
+		    $("#formulario-archivo").on("submit", function (e) {
+		    	alert(precioTotal)
+		        // cancel the default behavior
+		        e.preventDefault();
+		        // use $.ajax() to upload file
+		        $.ajax({
+		            url: "http://localhost:8080//"+variableEntera+"//pedido",
+		            type: "POST",
+		            data: new FormData(this),
+		            enctype: 'multipart/form-data',
+		            processData: false,
+		            contentType: false,
+		            cache: false,
+		            success: function (res) {
+		                console.log(res);
+		                alert("Se ha creado correctamente");
+		            },
+		            error: function (err) {
+		                console.error(err);
+		            }
+		        });
+		    });
+		});
+	
+</script>
+</body>
+</html>

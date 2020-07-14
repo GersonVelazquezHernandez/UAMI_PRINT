@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html  xmlns:th = "http://www.thymeleaf.org">
 	<head>
 		<meta charset="utf-8">
 		<link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Yellowtail&display=swap" rel="stylesheet">
@@ -277,12 +277,12 @@
 		            	    "matricula":parseInt(matricula),
 		            	    "contrasena":password
 		            	}
-		            loginBD(parseInt(matricula));
+		            loginBD(parseInt(matricula),password);
 		            
 		        }
 		        
 		}
-		function loginBD(id){
+		function loginBD(id,password){
 			const xhr = new XMLHttpRequest();
 
 		    xhr.onload = function() {
@@ -298,7 +298,8 @@
 			              timer: 2000
 			            });
 			            setTimeout(() => {
-				            window.location.href = 'http://localhost:8080/ejemplo';
+			  
+				            window.location.href = 'http://localhost:8080/NewFilePruebin/'+id;
 			            }, 2000);
 		        }
 		        else{
@@ -310,7 +311,7 @@
 			            });
 		        }
 		    }
-		        xhr.open('GET', 'http://localhost:8080/usuario/'+id);
+		        xhr.open('GET', 'http://localhost:8080/usuario/'+id+'/'+password);
 
 		        // set `Content-Type` header
 		           //xhr.setRequestHeader('Content-Type', 'application/json');

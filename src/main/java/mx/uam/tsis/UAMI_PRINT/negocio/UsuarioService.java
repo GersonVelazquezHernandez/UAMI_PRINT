@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import mx.uam.tsis.UAMI_PRINT.datos.RepositorioUsuario;
+import mx.uam.tsis.UAMI_PRINT.negocio.modelo.Pedido;
 import mx.uam.tsis.UAMI_PRINT.negocio.modelo.Usuario;
 
 @Service
@@ -14,6 +15,9 @@ import mx.uam.tsis.UAMI_PRINT.negocio.modelo.Usuario;
 public class UsuarioService {
 	@Autowired
 	private RepositorioUsuario repositorioUsuario;
+	
+	@Autowired
+	private PedidoService pedidoService;
 
 	/**
 	 * Crea un nuevo Usuario
@@ -83,4 +87,67 @@ public class UsuarioService {
 	
 	
 	
+	/**
+	 * Acceso de usuario al sistema validando matricula y contraseña
+	 * 
+	 * @param matricula
+	 * @param contrasena
+	 * @return Objeto usuario si datos de acceso son correctos, NULL en caso contrario
+	 */
+	public Usuario findByMatriculaAndPassword(Integer matricula, String contrasena) {
+		//Buscando usuario en BD por matricula
+		Optional <Usuario> usuarioOp= repositorioUsuario.findById(matricula);
+		
+		log.info("Dentro de UsuarioService en metodo findByMatrAndPass recibiendo matricula"+matricula+" y contrasena "+contrasena);
+		
+		//Validando si usuario existe en BD
+		if(usuarioOp.isPresent()) {
+			log.info("Contraseña del usuario en BD" +usuarioOp.get().getContrasena()+ "   Contraseña recibida por UsuarioController "+contrasena);
+			
+			//Validando si contraseña de acceso es igual a la contraseña del sistema 
+			if(usuarioOp.get().getContrasena().equals(contrasena)) {
+				log.info("Contraseña correcta y devolviendo Usuario " +usuarioOp.get());
+				return usuarioOp.get();
+			}else {
+				log.info("Contraseña incorrecta y devolviendo Usuario NULL");
+				return null;
+			}
+		}else {
+			log.info("Dentro de UsuarioService en metodo findByMatrAndPass y devolviendo NULL por que no existe el usuario con matricula "+matricula);
+			return null;
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	public boolean addPedidoToUsuario(Integer matricula, Integer idPedido) {
+	         	log.info("Entre al add");
+				
+				// 1.- Recuperamos primero al pedido
+				Pedido pedido = pedidoService.findById(idPedido);
+				
+				// 2.- Recuperamos el usuario
+				Optional <Usuario> usuarioOpt = repositorioUsuario.findById(matricula);
+				
+				// 3.- Verificamos que el pedido y el cliente existan
+				if(!usuarioOpt.isPresent() || pedido == null) {
+					
+					log.info("No se encontró alumno o grupo");
+					
+					return false;
+				}
+				
+				// 4.- Agrego el pedido al usuario
+				Usuario usuario = usuarioOpt.get();
+				usuario.addPedido(pedido);
+				
+				// 5.- Persistir el cambio
+				repositorioUsuario.save(usuario);
+				
+				return true;
+			}
 }
