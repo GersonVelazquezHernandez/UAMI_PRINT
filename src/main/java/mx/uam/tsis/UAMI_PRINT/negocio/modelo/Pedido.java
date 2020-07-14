@@ -19,7 +19,7 @@ public class Pedido {
 	@GeneratedValue // Autogenera un ID unico
 	private Integer idPedido;
 	
-	@NotBlank
+	
 	private String descripcionImpresion;
 	
 	@NotBlank
@@ -31,13 +31,19 @@ public class Pedido {
 	@NotBlank
     private String metodoPago;
 	
-	
-	
+	@NotBlank
+    private String precioTotal;
+
 	@Override
 	public String toString() {
-		return "Pedido [descripcionImpresion=" + descripcionImpresion + ", rutaArchivo=" + rutaArchivo
-				+ ", tipoImpresion=" + tipoImpresion + ", metodoPago=" + metodoPago + "]";
+		return "Pedido [idPedido=" + idPedido + ", descripcionImpresion=" + descripcionImpresion + ", rutaArchivo="
+				+ rutaArchivo + ", tipoImpresion=" + tipoImpresion + ", metodoPago=" + metodoPago + ", precioTotal="
+				+ precioTotal + "]";
 	}
+	
+	
+	
+	
     
     
 }

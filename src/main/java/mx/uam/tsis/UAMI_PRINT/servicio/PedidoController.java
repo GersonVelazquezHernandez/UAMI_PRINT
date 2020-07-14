@@ -37,7 +37,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import mx.uam.tsis.UAMI_PRINT.negocio.PedidoService;
+import mx.uam.tsis.UAMI_PRINT.negocio.UsuarioService;
 import mx.uam.tsis.UAMI_PRINT.negocio.modelo.Pedido;
+import mx.uam.tsis.UAMI_PRINT.negocio.modelo.Usuario;
 
 
 /*Controlador tipo rest de capa de servicio*/
@@ -45,58 +47,13 @@ import mx.uam.tsis.UAMI_PRINT.negocio.modelo.Pedido;
 @Slf4j
 public class PedidoController {
 	
-	private Pedido pedido = new Pedido();
+	private Pedido pedido;
 	
 	@Autowired
 	private PedidoService pedidoService;
-	
-	
+		
 	//Folder donde se guardaran los documentos
 	private static final String UPLOAD_DIR = "C:/pruebas";
-	
-	
-	@PostMapping(path = "/cargar-archivo")
-	@ResponseBody
-	public ResponseEntity<String> fileUpload(
-			@RequestParam("descripcion") String descripcionImpresion,
-			@RequestParam("archivo") MultipartFile archivo,
-			@RequestParam("tipo") String tipoImpresion,
-			@RequestParam("pago") String metodoPago
-			
-			) throws IOException, ServletException {
-		
-		// filename completo del archivo
-        String filename = UPLOAD_DIR + File.separator + archivo.getOriginalFilename();
-        
-        pedido.setDescripcionImpresion(descripcionImpresion);
-		pedido.setMetodoPago(metodoPago);
-		pedido.setTipoImpresion(tipoImpresion);
-		pedido.setRutaArchivo(filename);
-        
-	     // error si el archivo no se subio, viene vacio ó si el archivo ya existe en la carpeta        
-        if(archivo.isEmpty() || new File(filename).exists()) {
- 			return new ResponseEntity(HttpStatus.BAD_REQUEST);
- 		}
-        
-        
-		// Creacion de archivo en la carpeta
-        File fileSaveDir = new File(UPLOAD_DIR);
-        if (!fileSaveDir.exists()) { // crea el directorio si no existe
-            fileSaveDir.mkdirs();
-        }         
-		        
-        FileOutputStream salidaArchivo = new FileOutputStream( filename );
-        salidaArchivo.write( archivo.getBytes() );
-        salidaArchivo.close();
-        
-        log.info(pedido.toString());
-        return new ResponseEntity(HttpStatus.ACCEPTED);
-	}
-	
-	
-	
-	/******************  METODOS ALTERNATIVOS ****************************************/
-	
 	/**
 	 * 
 	 * 
@@ -112,28 +69,33 @@ public class PedidoController {
 			value = "Crear Pedido.",
 			notes = "Puedes crear un pedido enviando el archivo PDF y datos complementarios"
 			)
-	@PostMapping(path = "/pedido", produces = "application/json")
+	@PostMapping(path = "/{matricula}/pedido", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity <?>descarga(
 			@RequestParam("descripcion") String descripcionImpresion,
 			@RequestParam("archivo") MultipartFile archivo,
 			@RequestParam("tipo") String tipoImpresion,
-			@RequestParam("pago") String metodoPago
+			@RequestParam("pago") String metodoPago,
+			@RequestParam("precio") String precioTotal,
+			@PathVariable ("matricula") Integer matricula
 			
 			) throws IOException, ServletException {
 		
-		pedido = new Pedido();
+		pedido = new Pedido();	
+		//Integer precio = Integer.parseInt(precioTotal);
 		
 		// filename completo del archivo
-        String filename = UPLOAD_DIR + "/" + archivo.getOriginalFilename();
-        log.info("Ruta de archivo almacenado "+filename);
+        String filename = UPLOAD_DIR + "/" +matricula + "/" +archivo.getOriginalFilename();
+        
+        
         
         pedido.setDescripcionImpresion(descripcionImpresion);
 		pedido.setMetodoPago(metodoPago);
 		pedido.setTipoImpresion(tipoImpresion);
 		pedido.setRutaArchivo(filename);
+		pedido.setPrecioTotal(precioTotal);
        
-		Pedido nuevoPedido = pedidoService.create(pedido, archivo);
+		Pedido nuevoPedido = pedidoService.create(pedido, archivo, matricula);
 		//Validando si pedido fue creado o es null
 		if(nuevoPedido != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPedido);
@@ -141,6 +103,8 @@ public class PedidoController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 	}
+	
+		
 	
 	@GetMapping(path = "/pedidos", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity <?> retrieveAll() {
@@ -150,6 +114,12 @@ public class PedidoController {
 		return ResponseEntity.status(HttpStatus.OK).body(result); 
 		
 	}
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 

@@ -25,10 +25,16 @@ public class PedidoService {
 	@Autowired
 	private RepositorioPedido repositorioPedido;
 	
+	//Tengo planes para hacer addtopedido
+	@Autowired
+	private UsuarioService usuarioService;
+	
+	
 	//Folder donde se guardaran los documentos
-	private static final String UPLOAD_DIR = "C:/pruebas";
+	private static final String UPLOAD_DIR = "C:/pruebas/";
 		
-	public Pedido create(Pedido nuevoPedido, MultipartFile archivo) throws IOException{
+	public Pedido create(Pedido nuevoPedido, MultipartFile archivo, Integer matricula) throws IOException{
+		Usuario user = usuarioService.findByMatricula(matricula);
 		
 		// Validando si archivo viene vacio ó si el archivo ya existe en la carpeta        
         if(archivo.isEmpty() || new File(nuevoPedido.getRutaArchivo()).exists()) {
@@ -37,7 +43,7 @@ public class PedidoService {
         
         
 	    // Creando el directorio
-        File fileSaveDir = new File(UPLOAD_DIR);
+        File fileSaveDir = new File(UPLOAD_DIR+user.getMatricula());
         if (!fileSaveDir.exists()) { // crea el directorio si no existe
             fileSaveDir.mkdirs();
         }
@@ -46,10 +52,18 @@ public class PedidoService {
         FileOutputStream salidaArchivo = new FileOutputStream( nuevoPedido.getRutaArchivo() );
 		salidaArchivo.write( archivo.getBytes() );
 		salidaArchivo.close();
+		System.out.println(nuevoPedido.toString());
 		
-	 	return repositorioPedido.save(nuevoPedido);
+		//Una vez guardado el archivo, tambien se guarda el pedido al suario que le corresponde		
+		Pedido newPedido = repositorioPedido.save(nuevoPedido);
+		usuarioService.addPedidoToUsuario(matricula, newPedido.getIdPedido());
+	 	return newPedido;
         
 	}
+	
+	
+	
+	
 	
 	//Funcion para devolver todos los pedidos
 	public Iterable <Pedido> retrieveAll (){
