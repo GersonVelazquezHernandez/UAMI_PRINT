@@ -1,8 +1,14 @@
 package mx.uam.tsis.UAMI_PRINT.negocio.modelo;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -42,5 +48,19 @@ public class Usuario {
 	@NotBlank
 	@ApiModelProperty(notes="Contraseña_Cuenta_Usuario del usuario", required=true)
 	private String contrasena;
+	
+	
+	
+	//Podriamos decir que esta es una identiada foranea para la base de datos ya que podemos tener multiples pedidos un cliente (cardinalidad multiple)
+		@Builder.Default
+		@ManyToMany(targetEntity = Pedido.class, fetch = FetchType.LAZY, cascade = CascadeType.MERGE) //Decimos que es de uno a muchos, con el Lazy le decimos que recorra su lista de alumnos y nos devuelba solo ese alumno y no todos de forma anticipada
+		@JoinColumn(name = "idPedido") // No crea tabla intermedia	
+		private List <Pedido> pedidos = new ArrayList<>();
+	
+		
+		//Debemos de hacer un metodo para agregar alumnos a la lista de alumnbos
+		public boolean addPedido(Pedido pedido) {
+			return pedidos.add(pedido);
+		}
 
 }

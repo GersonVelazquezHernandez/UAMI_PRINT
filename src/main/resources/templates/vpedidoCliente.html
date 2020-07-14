@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Yellowtail&display=swap" rel="stylesheet">
+		<link href="../../static/css/pedidoClienteStyle.css" th:href="@{/css/pedidoClienteStyle.css}" rel="stylesheet"/>	
+	</head>
+	<body>
+		<nav>
+			<img th:src="@{/images/logo.PNG}" alt="Logo"/>
+			<ul>
+				<!-- <li><a href=#>Imprimir</a></li>  -->
+				<li><a id="a_contacto" href="#contacto">Contacto</a></li>
+				<li><a id="login" href=#>Iniciar Sesion</a></li>
+				<li><a id="register" class="button" href=#>Registrarte</a></li>
+			</ul>
+		</nav>
+		
+		
+		<h1>Realizar solicitud de impresión</h1>
+		<pre id = "matricula_usuario" th:text="${matricula}"></pre>
+			<form action="#" id="form-pedido" name="form-pedido">
+			
+				<p class="titulo-pedido">Tipo de impresión:</p>
+				<div class="impersionType-container">
+					<input type=radio id="impresionTypeC" name="tipo" value="Color">
+					<label for="impresionTypeC">Color</label>
+					<input type=radio id="impresionTypeByN" name="tipo" value="BlancoNegro">
+					<label for="impresionTypeByN">Blanco y Negro</label>
+				</div>
+				
+				<p class="titulo-pedido">Documento a imprimir:</p>
+				<div class="impersionType-container">
+					<label for="archivo">Añade un archivo a imprimir:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+					<input type="file" id="archivo" name="archivo" accept="application/pdf">
+				</div>
+				
+				<p class="titulo-pedido">Descripción:</p>
+				<div class="impersionType-container">
+					<label for="comentario">Descripción de tu impresión:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+					<input type="text" id="comentario" placeholder="Descripcion" name="comentario"/>
+				</div>
+				
+				<p class="titulo-pedido">Total a pagar:</p>
+				<div class="impersionType-container">
+					<p id="totalPagar" class="totalPago">El pedido es de $******* MXN.</p>
+				</div>
+				
+				<p class="titulo-pedido">Forma de pago:</p>
+				<div class="impersionType-container">
+					<!--<button class="metodoPago">Efectivo</button>-->
+					<!--<button class="metodoPago">Tarjeta de Credito</button>  -->
+					<input type="radio" id="pagoTypeE" name="pago" value="efectivo">
+					<label for="pagoType" class="metodoPago">Efectivo</label>
+					<input type="radio" id="pagoTypeT" name="pago" value="tarjeta">
+					<label for="pagoTypeT" class="metodoPago">Tarjeta de Credito</label>
+				</div>
+				<div class="impersionType-container">
+					<button type="submit" id="realizaPedido" class="button">Solicitar ahora</button>
+				</div>
+			</form>
+		
+			<footer>
+				<p class="copyright">Todos los derechos Reservados Equipo UAMIPrint &reg; 2020</p>
+			</footer>
+		
+	</body>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+	
+	<script th:inline="javascript"> //Permite usar los datos del model objeto
+	var matricula_usuario = [[${matricula}]];
+	console.log(matricula_usuario);
+	
+	const formulario_registrar_pedido = document.querySelector('#form-pedido');
+	
+	/********VALIDACION DE TAMAÑO Y TIPO DE ARCHIVO*********/
+		var fileNameAux = '';
+		const costo = document.querySelector('#totalPagar');
+		var costoTotal = 0;
+		var count = 0;
+		var color_archivo = '';
+		var forma_pago = '';
+		/**DATOS DOCUMENTO**/
+		$(document).on('change','input[type="file"]',function(){
+			// this.files[0].size recupera el tamaño del archivo
+			// alert(this.files[0].size);
+			if(this.files[0]){
+		    fileName = this.files[0].name;
+		    fileSize = this.files[0].size;
+		    
+		    fileNameAux = fileName;
+		
+			if(fileSize > 20000000){
+				alert('El archivo no debe superar los 3MB');
+				this.value = '';
+				this.files[0].name = '';
+			}else{
+				if(fileSize > 10000000){
+					$("#pagoTypeE").attr('disabled', true);
+					Swal.fire({
+			              icon: 'warning',
+			              title: 'Advertencia!',
+			              text:'No puedes pagar en efectivo este archivo tienes que acudir a la sucursal!',
+			            });
+				}else{
+					$("#pagoTypeE").attr('disabled', false);
+				}
+				// recuperamos la extensión del archivo
+				var ext = fileName.split('.').pop();
+				
+				// Convertimos en minúscula porque 
+				// la extensión del archivo puede estar en mayúscula
+				ext = ext.toLowerCase();
+		    
+				// console.log(ext);
+				switch (ext) {
+					case 'pdf':
+						var reader = new FileReader();
+						reader.readAsBinaryString(this.files[0]);
+						reader.onloadend = function(){
+						    count = reader.result.match(/\/Type[\s]*\/Page[^s]/g).length;
+						    console.log('Número de páginas del pdf:',count );
+						    if(color_archivo === 'Color'){
+						    	costoTotal = 2*count;
+						    }
+						    if(color_archivo === 'BlancoNegro'){
+						    	costoTotal = .5*count;
+						    }
+							costo.innerHTML= "El pedido es de $"+costoTotal.toString()+"MXN.";
+						}
+						
+						break;
+					default:
+						alert('El archivo no tiene la extensión adecuada');
+						this.files[0].name = '';
+						this.value = ''; // reset del valor
+				}
+			}
+			}else{
+				costoTotal = 0;
+				costo.innerHTML= "El pedido es de $********MXN.";
+			}
+		});
+		$("input[name=tipo]").change(function () {	 
+			color_archivo = $(this).val();
+			console.log(color_archivo);
+			if(costoTotal > 0 && count !== 0){
+				if(color_archivo === 'Color'){
+			    	costoTotal = 2*count;
+			    }
+			    if(color_archivo === 'BlancoNegro'){
+			    	costoTotal = .5*count;
+			    }
+				costo.innerHTML= "El pedido es de $"+costoTotal.toString()+"MXN.";
+			}else{
+				costo.innerHTML= "El pedido es de $********MXN.";
+
+			}
+			});
+		$("input[name=pago]").change(function () {	 
+			forma_pago = $(this).val();
+			console.log(forma_pago);
+			});
+	
+		/***REGISTRAR PEDIDO***/
+		document.getElementById("realizaPedido").onclick = function() {eventListeners("pedido")};
+		function leerFormulario(e) {
+		    e.preventDefault(); // el action ya no se ejecuta de php y cae en el default
+		   
+		   /**Verifico si fueron llenados los campos**/
+		   if (color_archivo === ''){
+					   console.log('Algun campo vacio');
+			            Swal.fire({
+				              icon: 'error',
+				              title: 'Error!',
+				              text:'Seleccione color de impresion!',
+				            });
+				   }else {
+				   if(document.querySelector('input[type="file"]').files.length === 0){
+					   console.log('Algun campo vacio');
+			            Swal.fire({
+				              icon: 'error',
+				              title: 'Error!',
+				              text:'Seleccione un archivo para imprimir!',
+				            });
+				   }else{
+					   if(forma_pago === ''){
+						   Swal.fire({
+					              icon: 'error',
+					              title: 'Error!',
+					              text:'Seleccione la forma de pago!',
+					            });
+					   }else{
+			            console.log("validacion correcta");
+			            var datos_pedido = new FormData();
+			            datos_pedido.append('descripcion',$('#comentario').val());
+			            datos_pedido.append('archivo', $('input[type=file]')[0].files[0]); 
+			            datos_pedido.append('tipo',color_archivo);
+			            datos_pedido.append('pago',forma_pago);
+			            datos_pedido.append('precio',costoTotal.toString());
+			            /*var text = {
+			            	    "tipoDeImpresion":tipoImp,
+			            	    "tamañoArchivo":parseInt(tamañoArchivo),
+			            	    "descripcion":descripcion,
+			            	    "metodoDePago":tipoDePago
+			            	}*/
+			            	console.log(...datos_pedido)
+			            insertarBD(datos_pedido);
+					   }
+			        }
+			   }
+		}
+	
+		
+		function insertarBD(datos){
+			$.ajax({
+	            url: "http://localhost:8080//"+matricula_usuario+"//pedido",
+	            type: "POST",
+	            data: datos,
+	            enctype: 'multipart/form-data',
+	            processData: false,
+	            contentType: false,
+	            cache: false,
+	            success: function (res) {
+	                console.log(res);
+	                var file = datos.get("archivo");
+	                console.log(file.name);
+	                //alert("Se ha creado correctamente");
+	                Swal.fire({
+			              icon: 'success',
+			              title: 'Tu archivo se está imprimiendo!',
+			              html:'<h3>'+file.name+'</h3><p>Tipo de Impresión: '+res.tipoImpresion+'</p><p>Total: $'+res.precioTotal+' pesos</p><p>Comentarios: '+res.descripcionImpresion+'</p>' 
+			            });
+	                /**Limpia los campos para una nueva petición**/
+	                $('input[type=file]')[0].files[0].name = '';
+	                $('input[type=file]')[0].value = ''; // reset del valor
+	                $('#pagoTypeE').prop('checked',false);
+	                $('#pagoTypeT').prop('checked',false);
+	                $('#impresionTypeC').prop('checked',false);
+	                $('#impresionTypeByN').prop('checked',false);
+	                $('input[type=text]').val('');
+	                costo.innerHTML= "El pedido es de $********MXN.";
+	                costoTotal = 0;
+	        		count = 0;
+	        		color_archivo = '';
+	        		forma_pago = '';
+	        		fileNameAux = '';
+	            },
+	            error: function (err) {
+	                console.error(err);
+	            }
+	        });
+		}
+		
+		
+		/****************LISTENER PARA FORMULARIOS******************/
+		function eventListeners(accion){
+			if (accion === "pedido"){
+				console.log("Dentro de pedido");
+				formulario_registrar_pedido.addEventListener('submit', leerFormulario);
+			}
+		}
+	
+	</script>
+</html>
+
