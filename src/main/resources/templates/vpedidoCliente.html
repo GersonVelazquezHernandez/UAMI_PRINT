@@ -93,11 +93,21 @@
 		    
 		    fileNameAux = fileName;
 		
-			if(fileSize > 3000000){
+			if(fileSize > 20000000){
 				alert('El archivo no debe superar los 3MB');
 				this.value = '';
 				this.files[0].name = '';
 			}else{
+				if(fileSize > 10000000){
+					$("#pagoTypeE").attr('disabled', true);
+					Swal.fire({
+			              icon: 'warning',
+			              title: 'Advertencia!',
+			              text:'No puedes pagar en efectivo este archivo tienes que acudir a la sucursal!',
+			            });
+				}else{
+					$("#pagoTypeE").attr('disabled', false);
+				}
 				// recuperamos la extensión del archivo
 				var ext = fileName.split('.').pop();
 				
@@ -216,7 +226,28 @@
 	            cache: false,
 	            success: function (res) {
 	                console.log(res);
-	                alert("Se ha creado correctamente");
+	                var file = datos.get("archivo");
+	                console.log(file.name);
+	                //alert("Se ha creado correctamente");
+	                Swal.fire({
+			              icon: 'success',
+			              title: 'Tu archivo se está imprimiendo!',
+			              html:'<h3>'+file.name+'</h3><p>Tipo de Impresión: '+res.tipoImpresion+'</p><p>Total: $'+res.precioTotal+' pesos</p><p>Comentarios: '+res.descripcionImpresion+'</p>' 
+			            });
+	                /**Limpia los campos para una nueva petición**/
+	                $('input[type=file]')[0].files[0].name = '';
+	                $('input[type=file]')[0].value = ''; // reset del valor
+	                $('#pagoTypeE').prop('checked',false);
+	                $('#pagoTypeT').prop('checked',false);
+	                $('#impresionTypeC').prop('checked',false);
+	                $('#impresionTypeByN').prop('checked',false);
+	                $('input[type=text]').val('');
+	                costo.innerHTML= "El pedido es de $********MXN.";
+	                costoTotal = 0;
+	        		count = 0;
+	        		color_archivo = '';
+	        		forma_pago = '';
+	        		fileNameAux = '';
 	            },
 	            error: function (err) {
 	                console.error(err);

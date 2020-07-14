@@ -17,7 +17,7 @@ public class MainController {
 	@GetMapping("/")
 	public String index() {
 		log.info("*****En Index******");
-		return "vpedidoCliente";
+		return "index";
 	}
 	
 	@RequestMapping("/ejemplo")
@@ -31,6 +31,6 @@ public class MainController {
 	@RequestMapping("/vpedidoCliente/{matricula}")
 	public String vpedido(@PathVariable Integer matricula, Model model) {
 		model.addAttribute("matricula", matricula);
-		return "NewFilePruebin";
+		return "vpedidoCliente";
 	}
 }
