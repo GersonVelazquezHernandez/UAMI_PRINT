@@ -33,10 +33,12 @@ public class Pedido {
 	
 	@NotBlank
     private String precioTotal;
+	
+	private String nombreArchivo;
 
 	@Override
 	public String toString() {
-		return "Pedido [idPedido=" + idPedido + ", descripcionImpresion=" + descripcionImpresion + ", rutaArchivo="
+		return "Pedido [idPedido=" + idPedido + ", NombreArchivo=" + nombreArchivo + ", descripcionImpresion=" + descripcionImpresion + ", rutaArchivo="
 				+ rutaArchivo + ", tipoImpresion=" + tipoImpresion + ", metodoPago=" + metodoPago + ", precioTotal="
 				+ precioTotal + "]";
 	}
