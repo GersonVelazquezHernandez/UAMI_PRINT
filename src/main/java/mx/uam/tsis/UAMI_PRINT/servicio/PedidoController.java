@@ -185,7 +185,8 @@ public class PedidoController {
 	@DeleteMapping(path = "/pedido/{idPedido}", produces = MediaType.APPLICATION_JSON_VALUE )
 	public ResponseEntity <?> delete(@PathVariable("idPedido") Integer idPedido ) {
 		Pedido pedido = pedidoService.findById(idPedido);
-			
+		log.info("Dentro de eliminar"+idPedido.toString());	
+		log.info(pedido.toString());
 		if(pedido != null) {
 			pedidoService.delete(pedido);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pedido);
