@@ -12,6 +12,8 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @Entity
+@DynamicUpdate
 public class Usuario {
 	@NotNull       //Valida al pasar por controllerRest que esté campo no sea nulo
 	@ApiModelProperty(notes="Matricula del usuario", required=true)  //Aparecen en la descripcion de parametros de swagger como un requisito para utilizarlo por metodos CRUD
@@ -53,14 +56,20 @@ public class Usuario {
 	
 	//Podriamos decir que esta es una identiada foranea para la base de datos ya que podemos tener multiples pedidos un cliente (cardinalidad multiple)
 		@Builder.Default
-		@ManyToMany(targetEntity = Pedido.class, fetch = FetchType.LAZY, cascade = CascadeType.MERGE) //Decimos que es de uno a muchos, con el Lazy le decimos que recorra su lista de alumnos y nos devuelba solo ese alumno y no todos de forma anticipada
-		@JoinColumn(name = "idPedido") // No crea tabla intermedia	
+		@OneToMany(targetEntity = Pedido.class,fetch = FetchType.LAZY,  cascade = CascadeType.MERGE) //Decimos que es de uno a muchos, con el Lazy le decimos que recorra su lista de alumnos y nos devuelba solo ese alumno y no todos de forma anticipada
+		@JoinColumn(name = "usuarioId") // No crea tabla intermedia	
 		private List <Pedido> pedidos = new ArrayList<>();
 	
 		
 		//Debemos de hacer un metodo para agregar alumnos a la lista de alumnbos
 		public boolean addPedido(Pedido pedido) {
 			return pedidos.add(pedido);
+		}
+		
+		
+		
+		public boolean removePedido(Pedido pedido) {
+			return pedidos.remove(pedido);
 		}
 
 }

@@ -189,12 +189,14 @@ public class PedidoController {
 			value = "Eliminar Pedido",
 			notes = "Puedes Eliminar el pedido por ID"
 			)
-	@DeleteMapping(path = "/pedido/{idPedido}", produces = MediaType.APPLICATION_JSON_VALUE )
-	public ResponseEntity <?> delete(@PathVariable("idPedido") Integer idPedido ) {
+	@DeleteMapping(path = "/pedido/{idPedido}/usuario", produces = MediaType.APPLICATION_JSON_VALUE )
+	public ResponseEntity <?> delete(@PathVariable("idPedido") Integer idPedido, 
+			@RequestParam("matricula") Integer matricula) {
+		
 		Pedido pedido = pedidoService.findById(idPedido);
 			
 		if(pedido != null) {
-			pedidoService.delete(pedido);
+			pedidoService.delete(matricula, pedido);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pedido);
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No existe Pedido con el ID en el sistema");
