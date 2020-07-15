@@ -34,6 +34,8 @@ public class Pedido {
 	@NotBlank
     private String precioTotal;
 	
+	private Integer matricula;
+	
 	private String nombreArchivo;
 
 	@Override

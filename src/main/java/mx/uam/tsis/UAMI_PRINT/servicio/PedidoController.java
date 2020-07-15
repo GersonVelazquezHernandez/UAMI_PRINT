@@ -101,6 +101,8 @@ public class PedidoController {
 		pedido.setRutaArchivo(filename);
 		pedido.setPrecioTotal(precioTotal);
 		pedido.setNombreArchivo(archivo.getOriginalFilename());
+		pedido.setMatricula(matricula);
+		
        
 		Pedido nuevoPedido = pedidoService.create(pedido, archivo, matricula);
 		//Validando si pedido fue creado o es null
@@ -180,6 +182,9 @@ public class PedidoController {
 	}
 	
 	
+	
+	
+	
 	/**
 	 * 
 	 * @param idPedido
@@ -202,6 +207,14 @@ public class PedidoController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No existe Pedido con el ID en el sistema");
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	/**
