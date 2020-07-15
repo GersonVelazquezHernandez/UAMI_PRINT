@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html  xmlns:th = "http://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		<link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Yellowtail&display=swap" rel="stylesheet">
+		<link href="../../static/css/pedidoAdminStyle.css" th:href="@{css/pedidoAdminStyle.css}" rel="stylesheet"/>	
+	</head>
+	<body>
+	
+	<nav>
+		<img th:src="@{images/logo.PNG}" alt="Logo"/>
+		<ul>
+			<!-- <li><a href=#>Imprimir</a></li>  -->
+			<li><a id="a_contacto" href="#contacto">Contacto</a></li>
+			<li><a id="login" href=#>Iniciar Sesion</a></li>
+			<li><a id="register" class="button" href=#>Registrarte</a></li>
+		</ul>
+	</nav>
+	
+	<h1 class="title">>Pedidos</h1>
+	<input type="text" id="texto" placeholder="Buscar pedido">
+	
+	<table class="tablaPedido" id="tablaPedidoBusca"></table>
+	
+	<p class="title" id="cantidadP">>Total de: * Pedidos</p>
+	<div class="div-tabla">
+		<table class="tablaPedido" id="tablaPedidosAll">
+			<tr class="filaCabeza">
+	    		<th>ID</th>
+	    		<th>Descripción</th> 
+	    		<th>Tipo de Impresión</th>
+	    		<th>Metodo de Pago</th>
+	    		<th>Total a pagar</th>
+	    		<th>Acciones</th>
+	  		</tr>
+	  		 
+		</table>
+	</div>
+	</body>
+	<footer>
+		<p class="copyright">Todos los derechos Reservados Equipo UAMIPrint &reg; 2020</p>
+	</footer>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+	<script>
+	var i=0;
+	var pedidos=0;
+	const costo = document.querySelector('#cantidadP');
+	//Solo se puso de prueba esto:
+	var data = [
+	    { "name":"Ford", "models":"Mustang"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"BMW", "models":"X5"},
+	    { "name":"Fiat", "models":"Panda"}
+	  ]
+	$(document).ready(function(){
+		//Solo se puso de prueba este FOR superficial
+		/**for(i in data){
+		    $("#tablaPedidosAll").append("<tr><td>"+data[i].name+"</td><td>"+data[i].models+"</td><td>"+data[i].models+"</td><td>"+data[i].models+"</td><td>"+data[i].models+"</td><td><img th:src="+'"@{images/download.PNG}"'+"alt="+'"descarga"'+"/><img th:src="+'"@{images/elimina.PNG}"'+"alt="+'"elimina"'+"/></td></tr>");
+			pedidos=pedidos+1;
+		}**/
+		//Muestra todos los PEDIDOS
+		$.get("/pedidos", function(data, status){
+			for(i in data){
+				$("#tablaPedidosAll").append("<tr><td>"+data[i].idPedido+"</td><td>"+data[i].descripcionImpresion+"</td><td>"+data[i].tipoImpresion+"</td><td>"+data[i].metodoPago+"</td><td>"+data[i].precioTotal+"</td><td><img th:src="+'"@{images/download.PNG}"'+"alt="+'"descarga"'+"/><img th:src="+'"@{images/elimina.PNG}"'+"alt="+'"elimina"'+"/></td></tr>");
+			}
+		});
+		costo.innerHTML= ">Total de: "+pedidos.toString()+ " Pedidos";//Muestra la cantidad de pedidos que hay
+		
+		$(document).on('change','input[type="text"]',function(){
+			var texto = $("#texto").val();
+			$.get("pedido/"+texto, function(data, status){
+				$("#tablaPedidoBusca").append("<tr><td>"+data[i].idPedido+"</td><td>"+data[i].descripcionImpresion+"</td><td>"+data[i].tipoImpresion+"</td><td>"+data[i].metodoPago+"</td><td>"+data[i].precioTotal+"</td><td><img th:src="+'"@{images/download.PNG}"'+"alt="+'"descarga"'+"/><img th:src="+'"@{images/elimina.PNG}"'+"alt="+'"elimina"'+"/></td></tr>");
+			 });
+		});
+		
+		document.getElementById("descarga").addEventListener("click", descargaArchivo);
+
+		function descargaArchivo() {
+			 var id = $('#idPedido').val();
+			 $.get("descargaPDF/"+id, function(data, status){ 
+				 //NO SE COMO LO VAYA A DEVOLVER
+			 });
+		}
+		
+		document.getElementById("elimina").addEventListener("click", eliminaArchivo);
+
+		function eliminaArchivo() {
+			 var id = $('#idPedido').val();
+			  var urldirection="pedido/"+id ;
+			  alert(urldirection);
+				$.ajax({
+					type : "DELETE",
+					url : urldirection,
+					success : function(result) {
+						console.log("data: "+  result);
+					}
+				});
+		}
+		
+	});
+	
+	
+	
+	
+	
+	
+	</script>
+</html>
