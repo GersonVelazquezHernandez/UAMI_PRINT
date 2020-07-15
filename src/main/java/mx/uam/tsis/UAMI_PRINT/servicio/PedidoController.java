@@ -245,7 +245,7 @@ public class PedidoController {
 	        }
 			
 		} else {
-			log.info("EL pedido no existe en sistema");
+			log.info("EL pedido no existe en sistem a");
 		}
     }
 }
