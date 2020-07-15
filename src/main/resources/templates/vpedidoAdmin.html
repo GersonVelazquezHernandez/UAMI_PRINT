@@ -52,7 +52,7 @@
 		
 		$.get("/pedidos", function(data, status){
 			for(i in data){
-				$("#tablaPedidosAll").append("<tr id="+data[i].idPedido+"><td>"+data[i].idPedido+"</td><td>"+data[i].descripcionImpresion+"</td><td>"+data[i].tipoImpresion+"</td><td>"+data[i].metodoPago+"</td><td>$"+data[i].precioTotal+"</td><td><button onclick='descargar_arch("+data[i].idPedido+")'><i class='fas fa-download'></i></button><button onclick='eliminar_arch("+data[i].idPedido+")'><i class='fas fa-trash-alt'></i></button></td></tr>");
+				$("#tablaPedidosAll").append("<tr id="+data[i].idPedido+"><td>"+data[i].idPedido+"</td><td>"+data[i].descripcionImpresion+"</td><td>"+data[i].tipoImpresion+"</td><td>"+data[i].metodoPago+"</td><td>$"+data[i].precioTotal+"</td><td><button onclick='descargar_arch("+data[i].idPedido+")'><i class='fas fa-download'></i></button><button onclick='eliminar_arch("+data[i].idPedido+","+data[i].matricula+")'><i class='fas fa-trash-alt'></i></button></td></tr>");
 			}
 			numeroContactos();
 		});
@@ -109,8 +109,8 @@
 	           xhr.send();
 	}
 	
-	function eliminar_arch(id){
-		console.log("Se quiere eliminar el pedid"+id);
+	function eliminar_arch(id, matricula){
+		console.log("Se quiere eliminar el pedid"+id+"del cliente"+matricula);
 		const xhr = new XMLHttpRequest();
 
 	    xhr.onload = function() {
@@ -134,7 +134,7 @@
 		            });
 	        }
 	    }
-	        xhr.open('DELETE', 'http://localhost:8080/pedido/'+id);
+	        xhr.open('DELETE', 'http://localhost:8080/pedido/'+id+'/usuario?matricula='+matricula);
 
 	        // set `Content-Type` header
 	           //xhr.setRequestHeader('Content-Type', 'application/json');
