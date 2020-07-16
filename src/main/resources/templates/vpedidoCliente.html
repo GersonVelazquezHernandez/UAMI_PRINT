@@ -94,7 +94,11 @@
 		    fileNameAux = fileName;
 		
 			if(fileSize > 20000000){
-				alert('El archivo no debe superar los 3MB');
+				Swal.fire({
+		              icon: 'error',
+		              title: 'Error!',
+		              text:'El archivo no puede exceder de 20MB!',
+		            });
 				this.value = '';
 				this.files[0].name = '';
 			}else{
@@ -147,7 +151,7 @@
 		$("input[name=tipo]").change(function () {	 
 			color_archivo = $(this).val();
 			console.log(color_archivo);
-			if(costoTotal > 0 && count !== 0){
+			if(count !== 0){
 				if(color_archivo === 'Color'){
 			    	costoTotal = 2*count;
 			    }
