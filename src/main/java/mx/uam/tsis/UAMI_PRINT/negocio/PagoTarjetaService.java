@@ -33,10 +33,37 @@ public class PagoTarjetaService {
 	}
 
 	public Tarjeta retrieve(Integer id) {
-		Optional<Tarjeta> alumnoOp = repositorioTarjeta.findById(id);
-		return alumnoOp.get();
+		Optional<Tarjeta> tarjetaOp = repositorioTarjeta.findById(id);
+		return tarjetaOp.get();
 
 	}
+	/////////////////////////////////////////////
+	public boolean retrievePago(Integer numeroTarjeta, Integer cvv, String fechaE, double costoCompra){
+		
+		Optional<Tarjeta> tarjetaOp = repositorioTarjeta.findById(numeroTarjeta);
+		log.info("LA TARJETA CONTIENE "+ tarjetaOp);
+		
+		if(tarjetaOp.get().getCvv().equals(cvv) && tarjetaOp.get().getFechaVencimiento().equals(fechaE)) {
+			log.info("entre al el if del retrive pago ");
+			
+			Tarjeta nuevaTarjeta= new Tarjeta();
+			
+			double monto =tarjetaOp.get().getSaldoTarjeta()-costoCompra;
+			log.info("monto :" + monto);
+			
+			nuevaTarjeta= tarjetaOp.get();
+			
+			nuevaTarjeta.setSaldoTarjeta(monto);
+			
+			repositorioTarjeta.save(nuevaTarjeta);
+			return true;
+		}
+		
+		return false;
+
+	}
+	/////////////////////////////////////////////
+	
 
 	public Tarjeta update(Integer id, Tarjeta tarjetaActualizar) {
 		Optional<Tarjeta> tarjeta = repositorioTarjeta.findById(id);

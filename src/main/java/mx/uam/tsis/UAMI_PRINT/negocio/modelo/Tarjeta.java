@@ -30,17 +30,20 @@ public class Tarjeta {
 	@ApiModelProperty(notes = "Numero de Tarjeta", required= true)
 	@Id
 	private Integer numeroTarjeta;
-
+	@NotNull
 	@ApiModelProperty(notes = "cvv de tarjeta", required= true)
 	private Integer cvv;
 	
-	
+	@NotNull
 	@ApiModelProperty(notes = "FechaVencimineto", required= true)
 	private String fechaVencimiento;
 	
-	
-	@ApiModelProperty(notes = "Nombre del Encargado", required= true)
+	@ApiModelProperty(notes = "Nombre del Encargado", required= false)
 	private String nombreEncargado;
-
+	///////////////////////////////////////////
+	@NotNull
+	@ApiModelProperty(notes = "Saldo de tarjeta", required= true)
+	private double saldoTarjeta;
+	///////////////////////////
 
 }
