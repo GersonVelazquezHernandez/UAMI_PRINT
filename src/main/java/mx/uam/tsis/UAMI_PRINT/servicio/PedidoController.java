@@ -5,15 +5,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -94,6 +100,9 @@ public class PedidoController {
 		pedido.setTipoImpresion(tipoImpresion);
 		pedido.setRutaArchivo(filename);
 		pedido.setPrecioTotal(precioTotal);
+		pedido.setNombreArchivo(archivo.getOriginalFilename());
+		pedido.setMatricula(matricula);
+		
        
 		Pedido nuevoPedido = pedidoService.create(pedido, archivo, matricula);
 		//Validando si pedido fue creado o es null
@@ -173,6 +182,9 @@ public class PedidoController {
 	}
 	
 	
+	
+	
+	
 	/**
 	 * 
 	 * @param idPedido
@@ -182,15 +194,76 @@ public class PedidoController {
 			value = "Eliminar Pedido",
 			notes = "Puedes Eliminar el pedido por ID"
 			)
-	@DeleteMapping(path = "/pedido/{idPedido}", produces = MediaType.APPLICATION_JSON_VALUE )
-	public ResponseEntity <?> delete(@PathVariable("idPedido") Integer idPedido ) {
+	@DeleteMapping(path = "/pedido/{idPedido}/usuario", produces = MediaType.APPLICATION_JSON_VALUE )
+	public ResponseEntity <?> delete(@PathVariable("idPedido") Integer idPedido, 
+			@RequestParam("matricula") Integer matricula) {
+		
 		Pedido pedido = pedidoService.findById(idPedido);
-			
+		log.info("Dentro de eliminar"+idPedido.toString());	
+		log.info(pedido.toString());
 		if(pedido != null) {
-			pedidoService.delete(pedido);
+			pedidoService.delete(matricula, pedido);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pedido);
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No existe Pedido con el ID en el sistema");
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @param idPedido
+	 * @throws Exception
+	 */
+	@ApiOperation(
+			value = "Descarga archivo.pdf del Pedido",
+			notes = "Puedes descargar el archivo PDF indicando el ID del pedido"
+			)
+	@GetMapping("/descargaPDF/{idPedido}")
+	public void handleRequest(HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable("idPedido") Integer idPedido) throws Exception {
+		log.info("Se quiere descargar el: "+idPedido.toString());	
+		Pedido pedido = pedidoService.findById(idPedido);
+		//Validando si pedido existe en BD
+		if(pedido != null) {
+			
+			try {
+				String nombreArchivo = pedido.getNombreArchivo();
+
+	            response.setContentType("application/pdf");
+	            
+	            //Facilitando la descarga asignando el nombre del archivo a descargar
+	            response.setHeader("Content-Disposition", "attachment; filename=\""+ nombreArchivo+ "\"");
+	            
+	            //Leyendo datos de archivo de la ruta donde se encuentra almacenada
+	            InputStream archivo = new FileInputStream(pedido.getRutaArchivo());
+	            
+	            //Extrae los bytes del archivo y guardando en response 
+	            IOUtils.copy(archivo, response.getOutputStream());
+	            
+	            //Terminando de extraer bytes para su envio (descarga)
+	            response.flushBuffer();
+	            
+	        } catch (IOException ex) {
+	            log.info("Error de archivo, no fue posible la descarga");
+	            throw ex;
+	        }
+			
+		} else {
+			log.info("EL pedido no existe en sistem a");
+		}
+    }
 }
+
+

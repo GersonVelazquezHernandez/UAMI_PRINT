@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html  xmlns:th = "http://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		<link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Yellowtail&display=swap" rel="stylesheet">
+		<link href="../../static/css/pedidoAdminStyle.css" th:href="@{css/pedidoAdminStyle.css}" rel="stylesheet"/>	
+	</head>
+	<body>
+	
+	<nav>
+		<img th:src="@{images/logo.PNG}" alt="Logo"/>
+		<ul>
+			<!-- <li><a href=#>Imprimir</a></li>  -->
+			<li><a id="a_contacto" href="#contacto">Contacto</a></li>
+			<li><a id="login" href=#>Iniciar Sesion</a></li>
+			<li><a id="register" class="button" href=#>Registrarte</a></li>
+		</ul>
+	</nav>
+	
+	<h1 class="title">Pedidos</h1>
+	<input type="text" id="buscador" placeholder="Buscar pedido">
+    <p class="title" id="total-pedidos" style="padding-top: 0;">Total: <span>2</span> pedidos</p>
+	<div class="div-tabla">
+		<table class="tablaPedido" id="tablaPedidosAll">
+			<tr id="head_table" class="filaCabeza">
+	    		<th>Nombre</th>
+	    		<th>Descripción</th> 
+	    		<th>Tipo de Impresión</th>
+	    		<th>Metodo de Pago</th>
+	    		<th>Total a pagar</th>
+	    		<th>Acciones</th>
+	  		 </tr>
+	  		 
+		</table>
+	</div>
+	</body>
+	<footer>
+		<p class="copyright">Todos los derechos Reservados Equipo UAMIPrint &reg; 2020</p>
+	</footer>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+	<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+	
+	<script>
+	var i=0;
+	var pedidos=0;
+	//Solo se puso de prueba esto:
+	$(document).ready(function(){
+		//Muestra todos los PEDIDOS
+		//Petición para obtener los datos GET
+		
+		$.get("/pedidos", function(data, status){
+			for(i in data){
+				$("#tablaPedidosAll").append("<tr id="+data[i].idPedido+"><td>"+data[i].nombreArchivo+"</td><td>"+data[i].descripcionImpresion+"</td><td>"+data[i].tipoImpresion+"</td><td>"+data[i].metodoPago+"</td><td>$"+data[i].precioTotal+"</td><td><button onclick='descargar_arch("+data[i].idPedido+")'><i class='fas fa-download'></i></button><button onclick='eliminar_arch("+data[i].idPedido+","+data[i].matricula+")'><i class='fas fa-trash-alt'></i></button></td></tr>");
+			}
+			numeroContactos();
+		});
+		
+	});
+	
+	const inputBuscador = document.querySelector('#buscador');
+	inputBuscador.addEventListener('input',buscarCliente);
+	function buscarCliente(e){
+		const expresion = new RegExp(e.target.value,"i"),
+	    	  registros = document.querySelectorAll('tbody tr');
+	          //console.log(registros);
+	          registros.forEach(registro =>{
+	          	registro.style.display = 'none';
+	            console.log(registro.childNodes[0]);
+	            if(registro.childNodes[0].textContent.replace(/\s/g, " ").search(expresion) != -1){
+	            	$('#head_table').css({"display":"table-row"});
+	            	registro.style.display = 'table-row';
+	            }
+	          });
+	          numeroContactos();
+	}
+	function descargar_arch(id){
+		console.log("Se quiere descargar el pedid"+id);
+		const xhr = new XMLHttpRequest();
+
+	    xhr.onload = function() {
+	        if (this.status === 200) {
+	            console.log(xhr.responseText);
+	            //const resultado = JSON.parse(xhr.responseText);
+	            //console.log(resultado); 
+	            
+	            Swal.fire({
+		              icon: 'success',
+		              title: 'Se está descargando el archivo!',
+		              showConfirmButton: false,
+		              timer: 2000
+		            });
+	            window.open('http://localhost:8080/descargaPDF/'+parseInt(id))
+	        }
+	        else{
+	        	console.log(this.status);
+	        	Swal.fire({
+		              icon: 'error',
+		              title: 'Error!',
+		              text:'¡No se puede Descargar el archivo!',
+		            });
+	        }
+	    }
+	        xhr.open('GET', 'http://localhost:8080/descargaPDF/'+parseInt(id));
+	        // set `Content-Type` header
+	           //xhr.setRequestHeader('Content-Type', 'application/json');
+
+	           // send rquest with JSON payload
+	           xhr.send();
+	}
+	
+	function eliminar_arch(id, matricula){
+		console.log("Se quiere eliminar el pedid"+id+"del cliente"+matricula);
+		const xhr = new XMLHttpRequest();
+
+	    xhr.onload = function() {
+	        if (this.status === 204) {
+	            //console.log(xhr.responseText);
+	            //const resultado = JSON.parse(xhr.responseText);
+	            //console.log(resultado);
+	        	Swal.fire({
+		              icon: 'success',
+		              title: 'Se eliminó correctamente el archivo!',
+		              showConfirmButton: false,
+		              timer: 2000
+		            });		  
+	        }
+	        else{
+	        	console.log(this.status);
+	        	Swal.fire({
+		              icon: 'error',
+		              title: 'Error!',
+		              text:'¡No se puede Eliminar el archivo!',
+		            });
+	        }
+	    }
+	        xhr.open('DELETE', 'http://localhost:8080/pedido/'+id+'/usuario?matricula='+matricula);
+
+	        // set `Content-Type` header
+	           //xhr.setRequestHeader('Content-Type', 'application/json');
+
+	           // send rquest with JSON payload
+	           xhr.send();
+		$('#'+id).remove();
+		numeroContactos();
+	}
+	function numeroContactos() {
+	    const totalContactos = document.querySelectorAll('tbody tr'),
+	        contenedor = document.querySelector('#total-pedidos span');
+	    console.log(totalContactos.length);
+	    let total = 0;
+	    totalContactos.forEach(contacto => {
+	        if (contacto.style.display === '' || contacto.style.display === 'table-row') {
+	            total++;
+	        }
+	    });
+	    if (contenedor){
+	    	if(total > 0){
+	        contenedor.textContent = total-1;
+	    	}else{
+		    contenedor.textContent = 0;
+	    	}
+	    }
+	}
+	
+	
+	
+	
+	
+	</script>
+</html>

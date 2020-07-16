@@ -56,7 +56,7 @@ public class PedidoService {
 		
 		//Una vez guardado el archivo, tambien se guarda el pedido al suario que le corresponde		
 		Pedido newPedido = repositorioPedido.save(nuevoPedido);
-		usuarioService.addPedidoToUsuario(matricula, newPedido.getIdPedido());
+		usuarioService.addPedidoToUsuario(matricula, newPedido);
 	 	return newPedido;
         
 	}
@@ -87,11 +87,22 @@ public class PedidoService {
 		 return repositorioPedido.save(pedido);
 	}
 	
+	
 	//Funcion que elimina un pedido
-	public Pedido delete(Pedido pedido) {
-		Optional <Pedido> pedidoOpt = repositorioPedido.findById(pedido.getIdPedido()); 
-			
+	public Pedido delete(Integer matricula, Pedido pedido) {
+		Optional <Pedido> pedidoOpt = repositorioPedido.findById(pedido.getIdPedido());	
 		if(pedidoOpt.isPresent()) {
+			try {
+				//Borrando el archivo que se guardo de manera local
+				 File archivo = new File(pedido.getRutaArchivo());
+				 boolean estatus = archivo.delete();
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			
+			//despues eliminamos al pedido asociado al usuario
+			usuarioService.removePedidoToUsuario(matricula, pedido);
+			 
 			repositorioPedido.delete(pedido);    //Eliminando alumno
 			return pedidoOpt.get();              //Enviando objeto copia de alumno eliminado
 		} else {
