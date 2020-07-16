@@ -286,8 +286,8 @@
 					 	xhr.onload = function() {
 		        			if (this.status === 200) {
           					console.log(xhr.responseText);
-		            			const resultado = JSON.parse(xhr.responseText);
-		            			console.log(resultado); 
+		            			//const resultado = JSON.parse(xhr.responseText);
+		            			//console.log(resultado); 
 		            			forma_pago = $("#pagoTypeT").val();
 		            			console.log(forma_pago);
 			  					  const Toast = Swal.mixin({
@@ -319,12 +319,11 @@
 					        	$('#pagoTypeT').prop('checked',false);
 		        			}
 		    			}
-		        		xhr.open('GET', 'http://localhost:8080/pagoTarjeta/'+formValues[0]);
-		        		// set `Content-Type` header
-		    		    xhr.setRequestHeader('Content-Type', 'application/json');
+		        		xhr.open('GET', 'http://localhost:8080/pagoTarjeta/'+parseInt(formValues[0])+'/?cvv='+parseInt(formValues[1])+'&fechaE='+formValues[2]+'&CostoCompra='+parseFloat(costoTotal));
+		        		
 
 		    		    // send rquest with JSON payload
-		    		    xhr.send(JSON.stringify(datos));    
+		    		    xhr.send();    
 					}else{
 						console.log('En cancelar');
 						$('#pagoTypeT').prop('checked',false);

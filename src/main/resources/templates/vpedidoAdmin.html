@@ -52,7 +52,7 @@
 		
 		$.get("/pedidos", function(data, status){
 			for(i in data){
-				$("#tablaPedidosAll").append("<tr id="+data[i].idPedido+"><td>"+data[i].idPedido+"</td><td>"+data[i].descripcionImpresion+"</td><td>"+data[i].tipoImpresion+"</td><td>"+data[i].metodoPago+"</td><td>$"+data[i].precioTotal+"</td><td><button onclick='descargar_arch("+data[i].idPedido+")'><i class='fas fa-download'></i></button><button onclick='eliminar_arch("+data[i].idPedido+","+data[i].matricula+")'><i class='fas fa-trash-alt'></i></button></td></tr>");
+				$("#tablaPedidosAll").append("<tr id="+data[i].idPedido+"><td>"+data[i].nombreArchivo+"</td><td>"+data[i].descripcionImpresion+"</td><td>"+data[i].tipoImpresion+"</td><td>"+data[i].metodoPago+"</td><td>$"+data[i].precioTotal+"</td><td><button onclick='descargar_arch("+data[i].idPedido+")'><i class='fas fa-download'></i></button><button onclick='eliminar_arch("+data[i].idPedido+","+data[i].matricula+")'><i class='fas fa-trash-alt'></i></button></td></tr>");
 			}
 			numeroContactos();
 		});
@@ -82,15 +82,16 @@
 	    xhr.onload = function() {
 	        if (this.status === 200) {
 	            console.log(xhr.responseText);
-	            const resultado = JSON.parse(xhr.responseText);
-	            console.log(resultado); 
+	            //const resultado = JSON.parse(xhr.responseText);
+	            //console.log(resultado); 
 	            
 	            Swal.fire({
 		              icon: 'success',
 		              title: 'Se está descargando el archivo!',
 		              showConfirmButton: false,
 		              timer: 2000
-		            });		  
+		            });
+	            window.open('http://localhost:8080/descargaPDF/'+parseInt(id))
 	        }
 	        else{
 	        	console.log(this.status);
@@ -101,7 +102,7 @@
 		            });
 	        }
 	    }
-	        xhr.open('GET', 'http://localhost:8080/descargarPDF/'+id);
+	        xhr.open('GET', 'http://localhost:8080/descargaPDF/'+parseInt(id));
 	        // set `Content-Type` header
 	           //xhr.setRequestHeader('Content-Type', 'application/json');
 

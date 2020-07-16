@@ -74,9 +74,10 @@ public class PagoTarjetaController {
 	public ResponseEntity<?> retrieveSaldo(@PathVariable("numeroTarjeta") @Valid Integer numeroTarjeta,
 											@RequestParam("cvv") @Valid Integer cvv,
 											@RequestParam("fechaE") @Valid String fechaE,
-											@RequestParam("CostoCompra") @Valid double costoCompra){ 
+											@RequestParam("CostoCompra") @Valid Double costoCompra){ 
 
-		
+		log.info(numeroTarjeta.toString());
+		log.info(costoCompra.toString());
 		boolean tarjeta = tarjetaService.retrievePago(numeroTarjeta, cvv, fechaE, costoCompra);
 		log.info("pasepor tarjetaController");
 		if (tarjeta ==true) {

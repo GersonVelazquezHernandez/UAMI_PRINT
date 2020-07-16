@@ -233,7 +233,7 @@ public class PedidoController {
 	public void handleRequest(HttpServletRequest request,
             HttpServletResponse response,
             @PathVariable("idPedido") Integer idPedido) throws Exception {
-			
+		log.info("Se quiere descargar el: "+idPedido.toString());	
 		Pedido pedido = pedidoService.findById(idPedido);
 		//Validando si pedido existe en BD
 		if(pedido != null) {
