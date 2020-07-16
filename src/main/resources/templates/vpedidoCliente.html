@@ -11,15 +11,15 @@
 			<img th:src="@{/images/logo.PNG}" alt="Logo"/>
 			<ul>
 				<!-- <li><a href=#>Imprimir</a></li>  -->
-				<li><a id="a_contacto" href="#contacto">Contacto</a></li>
-				<li><a id="login" href=#>Iniciar Sesion</a></li>
-				<li><a id="register" class="button" href=#>Registrarte</a></li>
+				<!-- <li><a id="a_contacto" href="#contacto">Contacto</a></li> -->
+				<li><a id="cerrar_sesion" href="http://localhost:8080/">Cerrar Sesion</a></li>
+				<!-- <li><a id="register" class="button" href=#>Registrarte</a></li> -->
 			</ul>
 		</nav>
 		
 		
 		<h1>Realizar solicitud de impresión</h1>
-		<pre id = "matricula_usuario" th:text="${matricula}"></pre>
+		<!-- <pre id = "matricula_usuario" th:text="${matricula}"></pre>  -->
 			<form action="#" id="form-pedido" name="form-pedido">
 			
 				<p class="titulo-pedido">Tipo de impresión:</p>
@@ -162,7 +162,10 @@
 			});
 		$("input[name=pago]").change(function () {	 
 			if($('#pagoTypeT').is(':checked')) {
-				Swal.fire({
+
+
+				/*Swal.fire({
+
 					tile: 'Introduce los dígitos de tu tarjeta',
 					  input: 'text',
 					  confirmButtonText: 'Confirmar &rarr;',
@@ -195,7 +198,10 @@
 			  					      `,
 			  					      confirmButtonText: 'Hecho!'
 			  					    });*/
-			  					  const Toast = Swal.mixin({
+
+
+			  					 /* const Toast = Swal.mixin({
+
 			  						  toast: true,
 			  						  position: 'center',
 			  						  showConfirmButton: false,
@@ -219,7 +225,7 @@
 						              title: 'Error!',
 						              text:'¡No se puede Encontrar la tarjeta!',
 						            });
-					        	$('#pagoTypeT').prop('checked',false);
+
 		        			}
 		    			}
 		        		xhr.open('GET', 'http://localhost:8080/tarjeta/'+result.value);
@@ -227,16 +233,105 @@
 			           xhr.send();		    
 					  }else if (
 							    /* Read more about handling dismissals below */
-							    result.dismiss === Swal.DismissReason.cancel
+
+							    /*result.dismiss === Swal.DismissReason.cancel
 							  ) {
-						  /*Swal.fire({
-				              icon: 'error',
-				              title: 'Error!',
-				              text:'¡No se puede Encontrar la tarjeta!',
-				            });*/
-						  $('#pagoTypeT').prop('checked',false);
+						  /*$('#pagoTypeT').prop('checked',false);
 							  }
+					})*/
+					
+				(async () => {
+
+					const { value: formValues } = await Swal.fire({
+					  title: 'Ingresa los datos de la tarjeta',
+					  html:
+					    '<input id="num-tarjeta" class="swal2-input" placeholder="Número de la tarjeta">' +
+					    '<input id="num-cvv" class="swal2-input" placeholder="CVV" style="width:25%!important;" >'+
+					    '<input id="fechaE" class="swal2-input" placeholder="Fecha de Expiración" style="width:50%!important;margin-left: 10%;">',
+					    showConfirmButton: true,
+					    confirmButtonText:'PAGAR!',
+					    confirmButtonColor: '#00ff00',
+					    showCancelButton: true,
+					    cancelButtonText:'Cancelar!',
+					    cancelButtonColor: '#00ff00',
+					  focusConfirm: false,
+					  preConfirm: () => {
+						  if(document.getElementById('num-tarjeta').value != '' && document.getElementById('num-cvv').value != '' && document.getElementById('fechaE').value != ''){
+					    return [
+					      document.getElementById('num-tarjeta').value,
+					      document.getElementById('num-cvv').value,
+					      document.getElementById('fechaE').value 
+					    ]
+						  }else{
+							  Swal.fire({
+					              icon: 'error',
+					              title: 'Error!',
+					              text:'¡Todos los campos son Obligatorios!',
+					            });
+							  $('#pagoTypeT').prop('checked',false);
+						  }
+					  }
 					})
+
+					if (formValues) {
+					  datos_tarjeta = JSON.stringify(formValues)
+					  console.log(costoTotal,datos_tarjeta, formValues);
+					  var datos = {
+			            	    "cvv":parseInt(formValues[1]),
+			            	    "fechaE":formValues[2],
+			            	    "CostoCompra":costoTotal
+			            	}
+					  console.log(datos);
+					  const xhr = new XMLHttpRequest();
+					 	xhr.onload = function() {
+		        			if (this.status === 200) {
+          					console.log(xhr.responseText);
+		            			const resultado = JSON.parse(xhr.responseText);
+		            			console.log(resultado); 
+		            			forma_pago = $("#pagoTypeT").val();
+		            			console.log(forma_pago);
+			  					  const Toast = Swal.mixin({
+			  						  toast: true,
+			  						  position: 'center',
+			  						  showConfirmButton: false,
+			  						  timer: 2000,
+			  						  timerProgressBar: false,
+			  						  onOpen: (toast) => {
+			  						    toast.addEventListener('mouseenter', Swal.stopTimer)
+			  						    toast.addEventListener('mouseleave', Swal.resumeTimer)
+			  						  }
+			  						})
+
+			  						Toast.fire({
+			  						  icon: 'success',
+			  						  title: 'Pago realizado!',
+			  						})
+			  						$("#pagoTypeT").attr('disabled', true);
+			  						$("#pagoTypeE").attr('disabled', true);
+		        			}else{
+					        	console.log(this.status);
+					        	
+					        	Swal.fire({
+						              icon: 'error',
+						              title: 'Error!',
+						              text:'¡No se puede Realizar el Pago!',
+						            });
+					        	$('#pagoTypeT').prop('checked',false);
+		        			}
+		    			}
+		        		xhr.open('GET', 'http://localhost:8080/pagoTarjeta/'+formValues[0]);
+		        		// set `Content-Type` header
+		    		    xhr.setRequestHeader('Content-Type', 'application/json');
+
+		    		    // send rquest with JSON payload
+		    		    xhr.send(JSON.stringify(datos));    
+					}else{
+						console.log('En cancelar');
+						$('#pagoTypeT').prop('checked',false);
+					}
+
+					})();
+					
 				
 				}else{
 					if($('#pagoTypeE').is(':checked')) {
@@ -257,7 +352,7 @@
 			            Swal.fire({
 				              icon: 'error',
 				              title: 'Error!',
-				              text:'Seleccione color de impresion!',
+				              text:'Seleccione color de impresion!'
 				            });
 				   }else {
 				   if(document.querySelector('input[type="file"]').files.length === 0){
@@ -265,14 +360,14 @@
 			            Swal.fire({
 				              icon: 'error',
 				              title: 'Error!',
-				              text:'Seleccione un archivo para imprimir!',
+				              text:'Seleccione un archivo para imprimir!'
 				            });
 				   }else{
 					   if(forma_pago === ''){
 						   Swal.fire({
 					              icon: 'error',
 					              title: 'Error!',
-					              text:'Seleccione la forma de pago!',
+					              text:'Seleccione la forma de pago!'
 					            });
 					   }else{
 			            console.log("validacion correcta");
@@ -324,6 +419,8 @@
 	                $('#impresionTypeByN').prop('checked',false);
 	                $('input[type=text]').val('');
 	                costo.innerHTML= "El pedido es de $********MXN.";
+	                $("#pagoTypeT").attr('disabled', false);
+					$("#pagoTypeE").attr('disabled', false);
 	                costoTotal = 0;
 	        		count = 0;
 	        		color_archivo = '';
@@ -331,14 +428,17 @@
 	        		fileNameAux = '';
 	            },
 	            error: function (err) {
-	            	console.log("Verifica si existe el archivo en la caperta C://")
+
+	            	console.log("Verifica si esxiste la ruta del archivo");
+
 	                console.error(err);
 	                Swal.fire({
 			              icon: 'error',
 			              title: 'Error!',
-			              text:'No se pudo registrar la compra!',
+
+			              text:'No se puede realizar la compra!'
 			            });
-	                
+
 	            }
 	        });
 		}

@@ -33,4 +33,10 @@ public class MainController {
 		model.addAttribute("matricula", matricula);
 		return "vpedidoCliente";
 	}
+	
+	@RequestMapping("/vpedidoAdmin")
+	public String vadmin(/*@PathVariable Integer matricula, Model model*/) {
+		//model.addAttribute("matricula", matricula);
+		return "vpedidoAdmin";
+	}
 }

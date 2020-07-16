@@ -298,8 +298,12 @@
 			              timer: 2000
 			            });
 			            setTimeout(() => {
-			  
-				            window.location.href = 'http://localhost:8080/vpedidoCliente/'+id;
+    	             if(id === 12345){
+			            		window.location.href = 'http://localhost:8080/vpedidoAdmin';	
+			            	}else{
+			            	window.location.href = 'http://localhost:8080/vpedidoCliente/'+id;
+			            	}
+
 			            }, 2000);
 		        }
 		        else{

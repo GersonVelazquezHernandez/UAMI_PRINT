@@ -199,7 +199,8 @@ public class PedidoController {
 			@RequestParam("matricula") Integer matricula) {
 		
 		Pedido pedido = pedidoService.findById(idPedido);
-			
+		log.info("Dentro de eliminar"+idPedido.toString());	
+		log.info(pedido.toString());
 		if(pedido != null) {
 			pedidoService.delete(matricula, pedido);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pedido);
