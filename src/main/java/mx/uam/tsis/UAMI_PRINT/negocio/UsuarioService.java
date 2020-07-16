@@ -124,11 +124,8 @@ public class UsuarioService {
 	
 	
 	
-	public boolean addPedidoToUsuario(Integer matricula, Integer idPedido) {
-	         	log.info("Entre al add");
-				
-				// 1.- Recuperamos primero al pedido
-				Pedido pedido = pedidoService.findById(idPedido);
+	public boolean addPedidoToUsuario(Integer matricula, Pedido pedido) {
+	         	log.info("HOLAAAAAA ENTRE Entre al add");
 				
 				// 2.- Recuperamos el usuario
 				Optional <Usuario> usuarioOpt = repositorioUsuario.findById(matricula);
@@ -150,4 +147,26 @@ public class UsuarioService {
 				
 				return true;
 			}
+	
+	public boolean removePedidoToUsuario(Integer matricula, Pedido pedido) {
+		// 2.- Recuperamos el usuario
+		Optional <Usuario> usuarioOpt = repositorioUsuario.findById(matricula);	
+		// 3.- Verificamos que el pedido y el cliente existan
+		if(!usuarioOpt.isPresent() || pedido == null) {
+			
+			log.info("No se encontró alumno o grupo");
+			
+			return false;
+		}
+		// 4.- Elimino el pedido al usuario
+		Usuario usuario = usuarioOpt.get();
+		usuario.removePedido(pedido);
+		
+		
+		// 5.- Persistir el cambio
+		repositorioUsuario.save(usuario);
+		
+		return true;
+	}
+	
 }

@@ -162,7 +162,10 @@
 			});
 		$("input[name=pago]").change(function () {	 
 			if($('#pagoTypeT').is(':checked')) {
+
+
 				/*Swal.fire({
+
 					tile: 'Introduce los dígitos de tu tarjeta',
 					  input: 'text',
 					  confirmButtonText: 'Confirmar &rarr;',
@@ -195,7 +198,10 @@
 			  					      `,
 			  					      confirmButtonText: 'Hecho!'
 			  					    });*/
+
+
 			  					 /* const Toast = Swal.mixin({
+
 			  						  toast: true,
 			  						  position: 'center',
 			  						  showConfirmButton: false,
@@ -219,6 +225,7 @@
 						              title: 'Error!',
 						              text:'¡No se puede Encontrar la tarjeta!',
 						            });
+
 		        			}
 		    			}
 		        		xhr.open('GET', 'http://localhost:8080/tarjeta/'+result.value);
@@ -226,6 +233,7 @@
 			           xhr.send();		    
 					  }else if (
 							    /* Read more about handling dismissals below */
+
 							    /*result.dismiss === Swal.DismissReason.cancel
 							  ) {
 						  /*$('#pagoTypeT').prop('checked',false);
@@ -420,13 +428,17 @@
 	        		fileNameAux = '';
 	            },
 	            error: function (err) {
+
 	            	console.log("Verifica si esxiste la ruta del archivo");
+
 	                console.error(err);
 	                Swal.fire({
 			              icon: 'error',
 			              title: 'Error!',
+
 			              text:'No se puede realizar la compra!'
 			            });
+
 	            }
 	        });
 		}
